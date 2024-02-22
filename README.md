@@ -1,10 +1,31 @@
 # Sartre-Noon
-This repository contains the sartre + Noon event generator modifications
+The uploaded files are in SartreNoon Folder
 <br>
-Hello My friend <br>
-<h2>
-  I am just revising my html skills here
-</h2>
-<b>NOw it works</b>
-<br>
-<i> It is italic</i>
+<ln>
+There are two FOlders inside 
+<ol>
+  <li>ORIGINAL</li>
+  <li>MODY</li>
+</ol>
+<h2>ORIGINAL</h2>
+<p>
+  <ul>
+    <li>
+      These are the original files of Noon that are unmodified as of now 
+    </li>
+    <li>
+      These files will probably remain unmodified/ unchanged just in case we require them at a later stage
+    </li>
+  </ul>
+</p>
+<h2>MODY</h2>
+  <p>
+    <ul>
+      <li>
+        This Folder contains the Modified files and we ill be doing our work here
+      </li>
+      <li>
+        ANything new must be added here and removedfrom here
+      </li>
+    </ul>
+  </p>
