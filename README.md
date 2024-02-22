@@ -2,10 +2,10 @@
 The uploaded files are in SartreNoon Folder
 <br>
 <ln>
-There are two FOlders inside 
+There are two Flders inside 
 <ol>
   <li>ORIGINAL</li>
-  <li>MODY</li>
+  <li>Mody</li>
 </ol>
 <h2>ORIGINAL</h2>
 <p>
@@ -18,7 +18,7 @@ There are two FOlders inside
     </li>
   </ul>
 </p>
-<h2>MODY</h2>
+<h2>Mody</h2>
   <p>
     <ul>
       <li>
