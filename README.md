@@ -22,13 +22,13 @@ There are two Flders inside
   <p>
     <ul>
       <li>
-        This Folder contains the Modified files and we ill be doing our work here
+        This Folder contains the Modified files and we will be doing our work here
       </li>
       <li>
-        ANything new must be added here and removedfrom here
+        Anything new must be added here and removed here
       </li>
     </ul>
   </p>
 
-  <h3><b><i>Please look at the file "Issues.md" for the issues faced with thier detailed/adequate description</i></b></h3>
+  <h3><b><i>Please look at the file "Issues.md" for the issues faced with their detailed/adequate description</i></b></h3>
 
