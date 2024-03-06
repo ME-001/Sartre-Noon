@@ -83,7 +83,7 @@ void runSartre(){
     TFile *inputfile = new TFile("extract.root","READ");
 
     TH1D *Photonk = (TH1D*)inputfile->Get("PhotonK");
-    //TH1D *rapidity = (TH1D*)inputfile->Get("Rapidity");
+    TH1D *rapidity = (TH1D*)inputfile->Get("Rapidity");
 
      //Int_t nEvents = Photonk->GetNbinsX()+1;
 
@@ -176,16 +176,16 @@ void computeModelBreakups(){
     hRapidityBreakup[k]->GetYaxis()->SetTitleOffset(1.5);
     }
   Int_t nBinsInput = hInputRapidity->GetNbinsX()+1;
-  for(Int_t j=1; j<=nBinsInput/2; j++){
+  for(Int_t j=1; j<=nBinsInput; j++){
     VMrapidity = hInputRapidity->GetBinCenter(j);
-    photonK = Photonk->GetBinContent(j);
+    //photonK = Photonk->GetBinContent(j);
     for(Int_t k=0; k<4; k++){
       //probLow[k] = 0;
       //probHigh[k] = 0;
       prob[k] = 0;
       for(Int_t iEvent = 0; iEvent<10000; iEvent++){
         //VMmass = hInputMass->GetRandom();
-        //photonK_Low = 0.5*VMmass*TMath::Exp(VMrapidity);
+        photonK = 0.5*VMmass*TMath::Exp(TMath::Abs(VMrapidity));
         //photonK_High = 0.5*VMmass*TMath::Exp(-1*VMrapidity);
         if(k == 0){
   	      //probLow[k] += 1.0;
