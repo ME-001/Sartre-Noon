@@ -46,16 +46,18 @@ void createRoundedEnergyHistogram(const char* inputFile, const char* outputFile)
     Long64_t nEntries = tree->GetEntries();
     for (Long64_t entry = 0; entry < nEntries; entry++) {
         branch->GetEntry(entry);  // Get the TLorentzVector data for this entry
-        Double_t Energy = lorentzVector->Et();  // Access rapidity data
+        Double_t Energy = lorentzVector->Gamma();  // Access rapidity data
         EnergyValues.push_back(Energy);  // Record the rapidity value
     }
 
+    Double_t minEnergy = *std::min_element(EnergyValues.begin(), EnergyValues.end());
+    Double_t maxEnergy = *std::max_element(EnergyValues.begin(), EnergyValues.end());
     // Create a 1D histogram for storing rounded rapidity values
-    TH1D *histogram = new TH1D("PhotonK", "PhotonK", 10000, 0, 5);
+    TH1D *histogram = new TH1D("PhotonK", "PhotonK", 100, minEnergy, maxEnergy);
 
     // Round off the recorded rapidity values and fill the histogram
     for (const auto& Energy : EnergyValues) {
-        Double_t roundedEnergy = std::round(Energy * 10000.0) / 10000.0;
+        Double_t roundedEnergy = std::round(Energy * 100.0) / 100.0;
         histogram->Fill(roundedEnergy);
     }
 

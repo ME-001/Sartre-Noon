@@ -237,7 +237,7 @@ Double_t NeutronGenerator::GetTotalFlux(const Double_t photonK)
 //______________________________________________________________________________
 void NeutronGenerator::FinishProduction(){
 
-  if(fRunMode == kMassRapidity || fRunMode == kFlatMultiplicity || fRunMode == k1n1n || kStoreQA || kStoreGen)fOutputFile = new TFile("Noon_Output.root","RECREATE");
+  if(fRunMode == kMassRapidity || fRunMode == kFlatMultiplicity || fRunMode == k1n1n || kStoreQA || kStoreGen ||kInterface)fOutputFile = new TFile("Noon_Output.root","RECREATE");
   if(kStoreQA)fQAhistList->Write();
   if(kStoreGen){
     if(gNuclearThickness)gNuclearThickness->Write();
@@ -260,7 +260,7 @@ void NeutronGenerator::FinishProduction(){
 void NeutronGenerator::FinishEvent(){
   
   if(fRunMode == kMassRapidity || fRunMode == kFlatMultiplicity || fRunMode == k1n1n)fEventTree ->Fill();
-  if(fRunMode == kStarlightAscii){
+  else{//(fRunMode == kStarlightAscii){
     for(Int_t i=0; i< fParticles->GetEntriesFast(); i++)fOutputStarlightAscii<<"TRACK: "<<i+11<<" "<<
     							       ((TParticle*)fParticles->At(i))->Px()<<" "<<
     							       ((TParticle*)fParticles->At(i))->Py()<<" "<<
@@ -963,7 +963,7 @@ void NeutronGenerator::InitQAhistograms(){
   fQAhistList = new TList();
   fQAhistList ->SetOwner();
     
-  hNeutronMultiplicity = CreateHist2D("hNeutronMultiplicity","Neutron multiplicity",100,0,100,100,0,100,"Number of neutrons (beam 1)","Number of neutrons (beam 2)","Counts");
+  hNeutronMultiplicity = CreateHist2D("hNeutronMultiplicity","Neutron multiplicity",5,0,5,5,0,5,"Number of neutrons (beam 1)","Number of neutrons (beam 2)","Counts");
   fQAhistList->Add(hNeutronMultiplicity);
   
   hEnergyGen = CreateHist1D("hEnergyGen","Generated energy before boost",3000,900,1200,"Energy [MeV]","Counts");
