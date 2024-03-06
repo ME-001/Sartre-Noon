@@ -237,7 +237,7 @@ Double_t NeutronGenerator::GetTotalFlux(const Double_t photonK)
 //______________________________________________________________________________
 void NeutronGenerator::FinishProduction(){
 
-  if(fRunMode == kMassRapidity || fRunMode == kFlatMultiplicity || fRunMode == k1n1n || kStoreQA || kStoreGen ||kInterface)fOutputFile = new TFile("Noon_Output.root","RECREATE");
+  if(fRunMode == kMassRapidity || fRunMode == kFlatMultiplicity || fRunMode == k1n1n || kStoreQA || kStoreGen ||kInterface)fOutputFile = new TFile("noon.root","RECREATE");
   if(kStoreQA)fQAhistList->Write();
   if(kStoreGen){
     if(gNuclearThickness)gNuclearThickness->Write();
