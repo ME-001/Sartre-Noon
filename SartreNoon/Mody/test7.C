@@ -49,9 +49,11 @@ void createRoundedRapidityHistogram(const char* inputFile, const char* outputFil
         Double_t rapidity = lorentzVector->Rapidity();  // Access rapidity data
         rapidityValues.push_back(rapidity);  // Record the rapidity value
     }
+    Double_t minRapidity = *std::min_element(rapidityValues.begin(), rapidityValues.end());
+    Double_t maxRapidity = *std::max_element(rapidityValues.begin(), rapidityValues.end());
 
     // Create a 1D histogram for storing rounded rapidity values
-    TH1D *histogram = new TH1D("Rapidity", "Rapidity", 100, -4.0, 4.0);
+    TH1D *histogram = new TH1D("Rapidity", "Rapidity", 100, minRapidity, maxRapidity);
 
     // Round off the recorded rapidity values and fill the histogram
     for (const auto& rapidity : rapidityValues) {
