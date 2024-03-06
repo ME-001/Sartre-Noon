@@ -91,14 +91,33 @@ void exData()
     PhotonK->Write();
     Rapidity->Write();
 
-    file->Close();
-    file2->Close();
+    // file->Close();
+    // file2->Close();
 
-    delete file;
-    delete file2;
-    delete lorentzVector;
-    delete branch;
+    // delete file;
+    // delete file2;
+    // delete lorentzVector;
+    // delete branch;
 
+    TH1D *xSection = new TH1D("xSection","xSection",1000,minRapidity,maxRapidity);
+
+    const Int_t cs = 524;//cross section 524 nb
+    const Int_t ne = 1e6;//Number of events 1M
+
+    Double_t xSectionValue = 0;
+
+    for(Long64_t index = 1; index <=1000; index++)
+    {
+        Double_t binValue = Rapidity->GetBinContent(index);
+        Double_t binWidth = Rapidity->GetBinWidth(index);
+
+        xSectionValue = binValue * cs / ne /binWidth ;
+
+        xSection->SetBinContent(index, xSectionValue);
+    }
+
+    xSection->Write();
     
+
 
 }

@@ -1,3 +1,9 @@
+/**
+ * This File is used for compute Model Breakup From xSection  of the exData
+ * 
+ * It only does one part of run.C
+*/
+
 #ifdef __CLING__
 #include <iostream>
 #include <fstream>
@@ -12,39 +18,14 @@
 #include "TCanvas.h"
 #include "TLegend.h"
 #include "NeutronGenerator.cxx+g"
+
+#include <vector>
+#include "TFile.h"
+#include "TTree.h"
+#include "TLorentzVector.h"
+#include <cmath>
 #endif
 
-void runStandaloneGenerator();
-void computeModelBreakups();
-
-void runBreakup(){
-
-  //runStandaloneGenerator();
-  computeModelBreakups();
-
-}
-
-void runStandaloneGenerator(){
-
-#if defined(__CINT__)
-  gROOT->LoadMacro("NeutronGenerator.cxx+g");
-#endif
-  
-  NeutronGenerator *gen = new NeutronGenerator();
-  gen->SetRapidityCut(-4.0,4.0);
-  //gen->SetHadronicInteractionModel(NeutronGenerator::kHardSphere);
-  gen->SetStoreQA();
-  //gen->SetStoreGeneratorFunctions();
-  gen->SetRunMode(NeutronGenerator::kMassRapidity,"ExampleTheory.root","massHist","xSectionHist");
-  //gen->SetRunMode(NeutronGenerator::k1n1n);
-  gen->Initialize();
-  gen->ReadENDF(kFALSE);
-  //gen->LoadENDF(); 
-  
-  gen->Setup();
-  gen->Run(1000);
-
-}
 
 void myLegendSetUp(TLegend *currentLegend=0,float currentTextSize=0.07,int columns=2){
   currentLegend->SetTextFont(42);
@@ -58,51 +39,53 @@ void myLegendSetUp(TLegend *currentLegend=0,float currentTextSize=0.07,int colum
   return;
 }
 
-void computeModelBreakups(){
+void ComputeBreakup()
+{
+    #if defined(__CINT__)
+    gROOT->LoadMacro("NeutronGenerator.cxx+g");
+    #endif
 
-#if defined(__CINT__)
-  gROOT->LoadMacro("NeutronGenerator.cxx+g");
-#endif
+    NeutronGenerator *gen = new NeutronGenerator();
+    gen->SetRapidityCut(-4.0,4.0);
+    gen->SetStoreQA();
+    gen->SetStoreGeneratorFunctions();
+    gen->SetHadronicInteractionModel(NeutronGenerator::kHardSphere); 
+    gen->Initialize(); 
+    gen->SetRunMode(NeutronGenerator::kInterface);  
+    gen->ReadENDF(kFALSE);
+    gen->Setup();
 
-  NeutronGenerator *gen = new NeutronGenerator();
-  //gen->SetHadronicInteractionModel(NeutronGenerator::kHardSphere);
-  gen->SetRunMode(NeutronGenerator::kInterface);
-  gen->Initialize();
-  gen->ReadENDF(kFALSE);
-  //gen->LoadENDF(); 
-  gen->Setup();
+    TFile *file = new TFile("exData.root","READ");
+    TH1D *hInputRapidity = (TH1D*)file->Get("xSection");
 
-  TFile *inputFile = new TFile("ExampleTheory.root","READ");
-  TH1D *hInputMass = (TH1D*)inputFile->Get("massHist");
-  TH1D *hInputRapidity = (TH1D*)inputFile->Get("xSectionHist");
+    TString breakups[] = {"All","0n0n","Xn0n","XnXn"};
+    TH1D *hRapidityBreakup[4];
 
-  TString breakups[] = {"All","0n0n","Xn0n","XnXn"};
-  TH1D *hRapidityBreakup[4];
-  
-  Double_t VMrapidity = 0;
-  Double_t VMmass = 0;
-  Double_t photonK_Low = 0;
-  Double_t photonK_High = 0;
-  Double_t probLow[4];
-  Double_t probHigh[4];
+    Double_t VMrapidity = 0;
+    Double_t VMmass = 3.09;
+
+    Double_t photonK_Low = 0;
+    Double_t photonK_High = 0;
+    Double_t probLow[4];
+    Double_t probHigh[4];
   
   //for(Int_t j=1; j<=41; j++)hInputRapidity->SetBinContent(j,hInputRapidity->GetBinContent(j)*gen->GetTotalFlux(0.5*3.09*TMath::Exp(hInputRapidity->GetBinCenter(j))));
   
-  hInputRapidity->SetLineWidth(2);
-  hInputRapidity->SetLineColor(kBlack);
-  hInputRapidity->SetStats(kFALSE);
-  hInputRapidity->SetTitle("");
-  hInputRapidity->GetXaxis()->SetTitle("y");
-  hInputRapidity->GetYaxis()->SetTitle("d#sigma/dy[mb]");
-  hInputRapidity->GetYaxis()->SetTitleOffset(1.5);
+    hInputRapidity->SetLineWidth(2);
+    hInputRapidity->SetLineColor(kBlack);
+    hInputRapidity->SetStats(kFALSE);
+    hInputRapidity->SetTitle("");
+    hInputRapidity->GetXaxis()->SetTitle("y");
+    hInputRapidity->GetYaxis()->SetTitle("d#sigma/dy[mb]");
+    hInputRapidity->GetYaxis()->SetTitleOffset(1.5);
   
-  for(Int_t k=0; k<4; k++){
-    TString breakupName = breakups[k].Data();
-    hRapidityBreakup[k] = (TH1D*)hInputRapidity->Clone(breakupName.Data());
-    hRapidityBreakup[k]->SetLineWidth(2);
-    hRapidityBreakup[k]->SetLineColor(1+k);
-    hRapidityBreakup[k]->SetStats(kFALSE);
-    hRapidityBreakup[k]->GetXaxis()->SetTitle("y");
+    for(Int_t k=0; k<4; k++){
+        TString breakupName = breakups[k].Data();
+        hRapidityBreakup[k] = (TH1D*)hInputRapidity->Clone(breakupName.Data());
+        hRapidityBreakup[k]->SetLineWidth(2);
+        hRapidityBreakup[k]->SetLineColor(1+k);
+        hRapidityBreakup[k]->SetStats(kFALSE);
+        hRapidityBreakup[k]->GetXaxis()->SetTitle("y");
     hRapidityBreakup[k]->GetYaxis()->SetTitle("#sigma [mb]");
     hRapidityBreakup[k]->GetYaxis()->SetTitleOffset(1.5);
     }
@@ -114,7 +97,6 @@ void computeModelBreakups(){
       probLow[k] = 0;
       probHigh[k] = 0;
       for(Int_t iEvent = 0; iEvent<1000; iEvent++){
-      VMmass = hInputMass->GetRandom();
       photonK_Low = 0.5*VMmass*TMath::Exp(VMrapidity);
       photonK_High = 0.5*VMmass*TMath::Exp(-1*VMrapidity);   
       if(k == 0){
@@ -188,5 +170,7 @@ void computeModelBreakups(){
   c2->cd(); myLegend2->Draw();
   c3->cd(); myLegend2->Draw();
 
-}
 
+
+
+}

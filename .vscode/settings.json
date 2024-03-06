@@ -49,6 +49,8 @@
         "ostream": "cpp",
         "stdexcept": "cpp",
         "streambuf": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "ComputeBreakup.C": "cpp",
+        "runBreakup.C": "cpp"
     }
 }
