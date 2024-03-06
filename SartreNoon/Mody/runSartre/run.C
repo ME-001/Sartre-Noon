@@ -67,12 +67,12 @@ void runSartre(){
   gen->Setup();
   //gen->Run(10000);
   
-    TDatabasePDG pdgData;
+    // TDatabasePDG pdgData;
     Double_t VMrapidity = 0;
     Double_t VMmass = 3.09;// jebspi mass
     Double_t photonK = 0;
-    Double_t fRapMin = -4.0;
-    Double_t fRapMax = 4.0;
+    // Double_t fRapMin = -4.0;
+    // Double_t fRapMax = 4.0;
 
     UInt_t nEvents = 10000;
     cout<<"Running production"<<endl; 
@@ -83,7 +83,7 @@ void runSartre(){
     TFile *inputfile = new TFile("extract.root","READ");
 
     TH1D *Photonk = (TH1D*)inputfile->Get("PhotonK");
-    TH1D *rapidity = (TH1D*)inputfile->Get("Rapidity");
+    //TH1D *rapidity = (TH1D*)inputfile->Get("Rapidity");
 
      //Int_t nEvents = Photonk->GetNbinsX()+1;
 

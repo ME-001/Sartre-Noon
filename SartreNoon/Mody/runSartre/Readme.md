@@ -40,7 +40,7 @@ In the final satage I expect it to run Sartre and compute the neutron generation
 
 As of now it generated events and check neutron breakup probabilities and store everything in the **noon.root** file. which is it's output file.
 
-It takes input as the files **Rapidity** and **PhotonK**.
+It takes input as the files **PhotonK**.
 
 ## computeModelBreakup()
 This file taked the *cross-section* as input and guve us neutron generation/ nuclear breakup probabilities inthe form of 3 graphs. 
