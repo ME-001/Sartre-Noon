@@ -62,17 +62,19 @@ void computeModelBreakups(){
     UInt_t nEvents = 10000;
     cout<<"Running production"<<endl; 
 
-     TFile *inputFile2 = new TFile("Energy_Pb.root","READ");
-     TH1D *Photonk = (TH1D*)inputFile2->Get("PhotonK");
+    TFile *inputFile = new TFile("Rapidity_Pb.root","READ");
+    TFile *inputFile2 = new TFile("Energy_Pb.root","READ");
+    TH1D *Photonk = (TH1D*)inputFile2->Get("PhotonK");
+    TH1D *rapidity = (TH1D*)inputFile->Get("Rapidity");
      //Int_t nEvents = Photonk->GetNbinsX()+1;
 
-    for(Int_t iEvent=0 ; iEvent<=nEvents;iEvent++)
+    for(Int_t iEvent = 1 ; iEvent<=nEvents;iEvent++)
     { 
 
       photonK = Photonk->GetBinContent(iEvent);
       //std::cout<<photonK<<std::endl;
 
-      VMrapidity = TMath::Abs(TMath::Log(2*photonK/3.09)); //  change 3.09 to mass variable
+      VMrapidity = rapidity->GetBinContent(iEvent); //TMath::Abs(TMath::Log(2*photonK/3.09)); //  change 3.09 to mass variable
 
       gen->GenerateEvent(photonK);
 
@@ -83,8 +85,5 @@ void computeModelBreakups(){
     
     gen->FinishProduction();
     cout<<"Finish production"<<endl;
-  
-    // TFile *fOutputFile = new TFile("SLoutput.root","RECREATE");
-    // fEventTree->Write();
-    // fOutputFile->Close(); 
+ 
 }
