@@ -66,41 +66,23 @@ void computeModelBreakups(){
      TH1D *Photonk = (TH1D*)inputFile2->Get("PhotonK");
      //Int_t nEvents = Photonk->GetNbinsX()+1;
 
-    for(Int_t iEvent ; iEvent<=nEvents;iEvent++){
+    for(Int_t iEvent=0 ; iEvent<=nEvents;iEvent++)
+    { 
 
-        Int_t nTotalPart = 0;  
-        Bool_t genOK = kFALSE;
+      photonK = Photonk->GetBinContent(iEvent);
+      //std::cout<<photonK<<std::endl;
 
-        //while(!genOK){
+      VMrapidity = TMath::Abs(TMath::Log(2*photonK/3.09)); //  change 3.09 to mass variable
 
-            //photonK = Photonk->GetVal()->At(iEvent);
-            photonK = Photonk->GetBinContent(iEvent);
-            cout<<photonK<<endl;
+      gen->GenerateEvent(photonK);
 
-            VMrapidity = TMath::Abs(TMath::Log(2*photonK/3.09)); //  change 3.09 to mass variable
-           // if(VMrapidity<fRapMax && VMrapidity>fRapMin) genOK = kTRUE;        
-        //}// don't know what it does
+      gen->FinishEvent();
 
-        // for(Int_t i = 0; i<fSLparticles->GetEntriesFast(); i++){
-        //     TParticle *part(dynamic_cast<TParticle*>(fSLparticles->At(i)));
-        //     new((*fParticles)[nTotalPart++]) TParticle(*part);
-        // }
-
-        gen->GenerateEvent(photonK);
-        // fNGparticles = gen->ImportParticles();
-        // for(Int_t i = 0; i<fNGparticles->GetEntriesFast(); i++){
-        // TParticle *part(dynamic_cast<TParticle*>(fNGparticles->At(i)));
-        // new((*fParticles)[nTotalPart++]) TParticle(*part);
-        // }
-
-        gen->FinishEvent();
-    
-        // fEventTree->Fill();
-        // fParticles->Clear("C");
 
     }
     
     gen->FinishProduction();
+    cout<<"Finish production"<<endl;
   
     // TFile *fOutputFile = new TFile("SLoutput.root","RECREATE");
     // fEventTree->Write();

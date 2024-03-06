@@ -97,7 +97,7 @@ private:
   const Int_t 		nSteps_GG = 20;
   const Int_t 		nSteps_R = 60;  
   const Int_t 		nSteps_Phi = 40;
-  const Int_t		nSteps_Energy = 100;
+  const Int_t		nSteps_Energy = 1000;
   const Int_t		maxNeutrons = 25; // 
   Int_t 		nFluxes;
   
