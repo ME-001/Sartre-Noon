@@ -19,7 +19,7 @@ void computeModelBreakups();
 
 void runB(){
 
-  runSartre();
+ // runSartre();
   computeModelBreakups();
 
 }
@@ -44,7 +44,7 @@ void runSartre(){
 
     //NeutronGenerator *gen = new NeutronGenerator();
 
-   NeutronGenerator *gen = new NeutronGenerator();
+  NeutronGenerator *gen = new NeutronGenerator();
   gen->SetStoreQA();
   gen->SetStoreGeneratorFunctions();
   gen->SetHadronicInteractionModel(NeutronGenerator::kHardSphere); 
@@ -120,18 +120,22 @@ void computeModelBreakups(){
   
 
   TFile *inputFile = new TFile("XSection.root","READ");
+  TFile *inputFile2 = new TFile("Energy_Pb.root","READ");
   // TH1D *hInputMass = (TH1D*)inputFile->Get("massHist");
   TH1D *hInputRapidity = (TH1D*)inputFile->Get("XSection");
+  TH1D *Photonk = (TH1D*)inputFile2->Get("PhotonK");
 
   TString breakups[] = {"All","0n0n","Xn0n","XnXn"};
   TH1D *hRapidityBreakup[4];
   
   Double_t VMrapidity = 0;
   Double_t VMmass = 3.09;
-  Double_t photonK_Low = 0;
-  Double_t photonK_High = 0;
+  //Double_t photonK_Low = 0;
+  //Double_t photonK_High = 0;
   Double_t probLow[4];
   Double_t probHigh[4];
+  Double_t photonK = 0;
+  Double_t prob[4];
   
   //for(Int_t j=1; j<=41; j++)hInputRapidity->SetBinContent(j,hInputRapidity->GetBinContent(j)*gen->GetTotalFlux(0.5*3.09*TMath::Exp(hInputRapidity->GetBinCenter(j))));
   
@@ -156,44 +160,54 @@ void computeModelBreakups(){
   Int_t nBinsInput = hInputRapidity->GetNbinsX()+1;
   for(Int_t j=1; j<=nBinsInput/2; j++){
     VMrapidity = hInputRapidity->GetBinCenter(j);
-
+    photonK = Photonk->GetBinContent(j);
     for(Int_t k=0; k<4; k++){
-      probLow[k] = 0;
-      probHigh[k] = 0;
-      for(Int_t iEvent = 0; iEvent<1000; iEvent++){
-      //VMmass = hInputMass->GetRandom();
-      photonK_Low = 0.5*VMmass*TMath::Exp(VMrapidity);
-      photonK_High = 0.5*VMmass*TMath::Exp(-1*VMrapidity);   
-      if(k == 0){
-  	probLow[k] += 1.0;
-        probHigh[k] += 1.0;
+      //probLow[k] = 0;
+      //probHigh[k] = 0;
+      prob[k] = 0;
+      for(Int_t iEvent = 0; iEvent<10000; iEvent++){
+        //VMmass = hInputMass->GetRandom();
+        //photonK_Low = 0.5*VMmass*TMath::Exp(VMrapidity);
+        //photonK_High = 0.5*VMmass*TMath::Exp(-1*VMrapidity);
+        if(k == 0){
+  	      //probLow[k] += 1.0;
+          //probHigh[k] += 1.0;
+          prob[k] += 1.0;
+
         }
-      if(k == 1){
-  	probLow[k] += gen->GetBreakupProbability(photonK_Low, 0, 0); 
-        probHigh[k] += gen->GetBreakupProbability(photonK_High, 0, 0);
-  	}
-      if(k == 2){
-  	probLow[k] += gen->GetBreakupProbability(photonK_Low, -1, 0); 
-        probHigh[k] += gen->GetBreakupProbability(photonK_High, -1, 0);
-  	}
-      if(k == 3){
-  	probLow[k] += gen->GetBreakupProbability(photonK_Low, -1, -1); 
-        probHigh[k] += gen->GetBreakupProbability(photonK_High, -1, -1);
-  	}
+        if(k == 1){
+  	      //probLow[k] += gen->GetBreakupProbability(photonK_Low, 0, 0); 
+          //probHigh[k] += gen->GetBreakupProbability(photonK_High, 0, 0);
+          prob[k] += gen->GetBreakupProbability(photonK,0,0);
+
+  	    }
+        if(k == 2){
+  	      //probLow[k] += gen->GetBreakupProbability(photonK_Low, -1, 0); 
+          //probHigh[k] += gen->GetBreakupProbability(photonK_High, -1, 0);
+          prob[k] += gen->GetBreakupProbability(photonK,-1,0);
+  	    }
+        if(k == 3){
+  	      //probLow[k] += gen->GetBreakupProbability(photonK_Low, -1, -1); 
+          //probHigh[k] += gen->GetBreakupProbability(photonK_High, -1, -1);
+          prob[k] += gen->GetBreakupProbability(photonK,-1,-1);
+  	    }
       }
-      probLow[k] /= 1000;
-      probHigh[k] /= 1000; 
-      hRapidityBreakup[k]->SetBinContent(j,hInputRapidity->GetBinContent(j)*probLow[k]+hInputRapidity->GetBinContent(nBinsInput-j)*probHigh[k]);
+      //probLow[k] /= 1000;
+      //probHigh[k] /= 1000;
+      prob[k] /= 10000; 
+      //hRapidityBreakup[k]->SetBinContent(j,hInputRapidity->GetBinContent(j)*probLow[k]+hInputRapidity->GetBinContent(nBinsInput-j)*probHigh[k]);
+      //hRapidityBreakup[k]->SetBinContent(nBinsInput-j,hRapidityBreakup[k]->GetBinContent(j));
+      hRapidityBreakup[k]->SetBinContent(j,hInputRapidity->GetBinContent(j)*prob[k]);
       hRapidityBreakup[k]->SetBinContent(nBinsInput-j,hRapidityBreakup[k]->GetBinContent(j));
-      }
     }
- 
+  }
+
   TCanvas *c1 = new TCanvas("c1","c1",0,0,800,800);
   TCanvas *c2 = new TCanvas("c2","c2",0,0,800,800);
   TCanvas *c3 = new TCanvas("c3","c3",0,0,800,800);
  
   c1->cd();  
-  hRapidityBreakup[0]->GetYaxis()->SetRangeUser(0,3000e3);
+  hRapidityBreakup[0]->GetYaxis()->SetRangeUser(0,1500);
   hRapidityBreakup[0]->DrawCopy();
   for(Int_t k=1; k<4; k++) hRapidityBreakup[k]->DrawCopy("same");
   gPad->SetGridy();gPad->SetGridx();

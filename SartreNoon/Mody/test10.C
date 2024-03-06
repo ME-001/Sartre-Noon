@@ -37,7 +37,7 @@ void calculateAndSaveXSectionForAllBins(const char* inputFile, const char* outpu
 
         // Calculate the cross-section value for the bin
         
-        xSectionValue = (binContent * 524/0.08);
+        xSectionValue = (binContent * 524/100);
 
         // Set the value in the new histogram
         xSectionHistogram->SetBinContent(binIndex, xSectionValue);
