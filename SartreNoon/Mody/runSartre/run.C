@@ -33,7 +33,7 @@ void run(){
 
     extract();
     runSartre();
-    computeModelBreakups();
+    //computeModelBreakups();
 
 }
 
@@ -106,6 +106,11 @@ void runSartre(){
     cout<<"Finish production"<<endl;
  
 }
+
+/**
+ * This Part of the code is for Compute Model breakUp 
+ * 
+*/
 
 void myLegendSetUp(TLegend *currentLegend=0,float currentTextSize=0.07,int columns=2){
   currentLegend->SetTextFont(42);
@@ -269,6 +274,13 @@ void computeModelBreakups(){
 
 }
 
+/**
+ * This Part of the code is for extacting data from the root file "example_Pb.root"
+ * 
+ * It will extract Rapidity, photon flux and calculate cross-section  
+ * 
+ * the 3 histogrmas corresponding to the 3 datasets are stored in extract.root
+*/
 
 void extract()
 {
@@ -363,7 +375,7 @@ TH1D* exSection(TH1D* histogram)
         double binContent = histogram->GetBinContent(binIndex);
         double binWidth = histogram->GetBinWidth(binIndex);
 
-        xSectionValue = (binContent * 524 / 100) / binWidth;
+        xSectionValue = (binContent * 524 / 100) ;// binWidth;
 
         xSectionHistogram->SetBinContent(binIndex, xSectionValue);
     }

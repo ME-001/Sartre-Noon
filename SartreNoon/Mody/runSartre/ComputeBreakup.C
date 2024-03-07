@@ -89,6 +89,8 @@ void ComputeBreakup()
     hRapidityBreakup[k]->GetYaxis()->SetTitle("#sigma [mb]");
     hRapidityBreakup[k]->GetYaxis()->SetTitleOffset(1.5);
     }
+
+    
   Int_t nBinsInput = hInputRapidity->GetNbinsX()+1;
   for(Int_t j=1; j<=nBinsInput/2; j++){
     VMrapidity = hInputRapidity->GetBinCenter(j);

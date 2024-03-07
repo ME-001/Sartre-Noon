@@ -19,8 +19,8 @@ void computeModelBreakups();
 
 void runB(){
 
- // runSartre();
-  computeModelBreakups();
+  runSartre();
+ // computeModelBreakups();
 
 }
 
@@ -61,14 +61,14 @@ void runSartre(){
     Double_t fRapMin = -4.0;
     Double_t fRapMax = 4.0;
 
-    UInt_t nEvents = 10000;
+    //UInt_t nEvents = 10000;
     cout<<"Running production"<<endl; 
 
     TFile *inputFile = new TFile("Rapidity_Pb.root","READ");
     TFile *inputFile2 = new TFile("Energy_Pb.root","READ");
     TH1D *Photonk = (TH1D*)inputFile2->Get("PhotonK");
     TH1D *rapidity = (TH1D*)inputFile->Get("Rapidity");
-     //Int_t nEvents = Photonk->GetNbinsX()+1;
+     Int_t nEvents = Photonk->GetNbinsX()+1;
 
     for(Int_t iEvent = 1 ; iEvent<=nEvents;iEvent++)
     { 
@@ -76,12 +76,11 @@ void runSartre(){
       photonK = Photonk->GetBinContent(iEvent);
       //std::cout<<photonK<<std::endl;
 
-      VMrapidity = rapidity->GetBinContent(iEvent); //TMath::Abs(TMath::Log(2*photonK/3.09)); //  change 3.09 to mass variable
+      VMrapidity = TMath::Abs(TMath::Log(2*photonK/3.09)); //  change 3.09 to mass variable
 
       gen->GenerateEvent(photonK);
 
       gen->FinishEvent();
-
 
     }
     

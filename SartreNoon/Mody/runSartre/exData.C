@@ -91,13 +91,6 @@ void exData()
     PhotonK->Write();
     Rapidity->Write();
 
-    // file->Close();
-    // file2->Close();
-
-    // delete file;
-    // delete file2;
-    // delete lorentzVector;
-    // delete branch;
 
     TH1D *xSection = new TH1D("xSection","xSection",1000,minRapidity,maxRapidity);
 
@@ -109,14 +102,22 @@ void exData()
     for(Long64_t index = 1; index <=1000; index++)
     {
         Double_t binValue = Rapidity->GetBinContent(index);
-        Double_t binWidth = Rapidity->GetBinWidth(index);
+        //Double_t binWidth = Rapidity->GetBinWidth(index);
 
-        xSectionValue = binValue * cs / ne /binWidth ;
+        xSectionValue = binValue * cs / ne ;//binWidth ;
 
         xSection->SetBinContent(index, xSectionValue);
     }
 
     xSection->Write();
+
+    file->Close();
+    file2->Close();
+
+    delete file;
+    delete file2;
+    delete lorentzVector;
+    delete branch;
     
 
 

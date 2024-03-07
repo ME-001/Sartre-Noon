@@ -51,6 +51,7 @@
         "streambuf": "cpp",
         "typeinfo": "cpp",
         "ComputeBreakup.C": "cpp",
-        "runBreakup.C": "cpp"
+        "runBreakup.C": "cpp",
+        "runB.C": "cpp"
     }
 }
