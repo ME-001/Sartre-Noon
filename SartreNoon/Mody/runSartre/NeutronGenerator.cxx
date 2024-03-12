@@ -160,6 +160,7 @@ void NeutronGenerator::Run(const UInt_t nEvents)
   Double_t photonK = 0;
   
   cout<<"Running production"<<endl; 
+  
   for(iEvent = 0; iEvent<=nEvents; iEvent++){
     if(iEvent%(nEvents/10) == 0){
       if(iEvent != 0){ printf("\033[1A"); printf("\033[K");}   

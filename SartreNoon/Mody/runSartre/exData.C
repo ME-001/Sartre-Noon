@@ -16,6 +16,7 @@
 #include <cmath>
 #include "TCanvas.h"
 #include "TGraph.h"
+#include "TMath.h"
 
 void exData()
 {
@@ -24,10 +25,13 @@ void exData()
     TTree *tree = dynamic_cast<TTree*>(file->Get("tree"));
 
     TLorentzVector* lorentzVector = new TLorentzVector();
+    TLorentzVector* lovec = new TLorentzVector();
 
     TBranch *branch = tree->GetBranch("vm");
+    //TBranch *bch = tree->GetBranch("gamma");
 
     branch->SetAddress(&lorentzVector);
+    //bch->SetAddress(&lovec);
 
     Long64_t nEntries = tree->GetEntries();
 
@@ -39,11 +43,12 @@ void exData()
 
     for (Long64_t entry = 0; entry < nEntries; entry++) {
         branch->GetEntry(entry);
+        //bch->GetEntry(entry);
 
         Double_t rapidity = lorentzVector->Rapidity();
         rapidityValues.push_back(rapidity);
 
-        Double_t energy = lorentzVector->Gamma();
+        Double_t energy = lorentzVector->Energy();
         energyValues.push_back(energy);
         
         //PhotonK->Fill(energy);
@@ -73,16 +78,22 @@ void exData()
     //for(const auto &element :energyValues) energyCounts[element]+=1;
 
     TH1D *PhotonK = new TH1D("PhotonK","PhotonK",1000,minEnergy,maxEnergy);
+    TH1D *vmEnergy = new TH1D("vm Energy","Vm Energy",1000,minEnergy,maxEnergy);
     TH1D *Rapidity = new TH1D("Rapidity","Rapidity",1000,minRapidity,maxRapidity);
 
+    
 
     for (Long64_t entry = 0; entry < nEntries; entry++) {
         
-        Double_t energy = energyValues[entry];
+        //Double_t energy = energyValues[entry];
         Double_t rapidity = rapidityValues[entry];
+        Double_t energy = 0.5*3.09*TMath::Exp(TMath::Abs(rapidity));
+        Double_t vmE = energyValues[entry];
+
 
         PhotonK->Fill(energy);
         Rapidity->Fill(rapidity);
+        vmEnergy->Fill(vmE);
 
     }
 
@@ -90,6 +101,7 @@ void exData()
 
     PhotonK->Write();
     Rapidity->Write();
+    vmEnergy->Write();
 
 
     TH1D *xSection = new TH1D("xSection","xSection",1000,minRapidity,maxRapidity);
@@ -118,6 +130,8 @@ void exData()
     delete file2;
     delete lorentzVector;
     delete branch;
+    //delete bch;
+    //delete lovec;
     
 
 

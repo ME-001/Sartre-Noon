@@ -30,7 +30,7 @@ void extract()
     TFile *outputRootFile = new TFile("extract.root", "RECREATE");
 
     exRapidity(tree, tree->GetBranch("vm"))->Write();
-    exEnergy(tree, tree->GetBranch("vm"))->Write();
+    exEnergy(tree, tree->GetBranch("Gamma"))->Write();
     exSection(exRapidity(tree, tree->GetBranch("vm")))->Write();
 
     outputRootFile->Close();
