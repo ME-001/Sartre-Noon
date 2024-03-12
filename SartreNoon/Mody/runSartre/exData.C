@@ -123,6 +123,21 @@ void exData()
 
     xSection->Write();
 
+    TCanvas* c1 = new TCanvas("c1","c1");
+        Rapidity->Draw();
+    TCanvas* c2 = new TCanvas("c2","c2");
+        xSection->Draw();
+    TCanvas* c3 = new TCanvas("c3","c3");
+        PhotonK->Draw();
+    TCanvas* c4 = new TCanvas("c4","c4");
+        vmEnergy->Draw();
+
+    c1->SaveAs("Rapidity.png");
+    c2->SaveAs("xSection.png");
+    c3->SaveAs("PhotonK.png");
+    c4->SaveAs("vmEnergy.png");
+
+
     file->Close();
     file2->Close();
 
@@ -132,6 +147,11 @@ void exData()
     delete branch;
     //delete bch;
     //delete lovec;
+    delete c1;
+    delete c2;
+    delete c3;
+    delete c4;
+
     
 
 
