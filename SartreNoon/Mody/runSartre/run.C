@@ -25,13 +25,13 @@ TH1D* exRapidity(TTree* tree, TBranch* branch);
 TH1D* exEnergy(TTree* tree, TBranch* branch);
 TH1D* exSection(TH1D* histogram);
 
-void extract();
+void exData();
 void runSartre();
 void computeModelBreakups();
 
 void run(){
 
-    extract();
+    exData();
     runSartre();
     //computeModelBreakups();
 
@@ -60,7 +60,7 @@ void runSartre(){
   NeutronGenerator *gen = new NeutronGenerator();
   gen->SetStoreQA();
   gen->SetStoreGeneratorFunctions();
-  gen->SetHadronicInteractionModel(NeutronGenerator::kHardSphere); 
+  gen->SetHadronicInteractionModel(NeutronGenerator::kGlauber); 
   gen->Initialize(); 
   gen->SetRunMode(NeutronGenerator::kInterface);  
   gen->ReadENDF(kFALSE);
@@ -74,18 +74,19 @@ void runSartre(){
     // Double_t fRapMin = -4.0;
     // Double_t fRapMax = 4.0;
 
-    UInt_t nEvents = 10000;
+    
     cout<<"Running production"<<endl; 
 
     // TFile *inputFile = new TFile("Rapidity_Pb.root","READ");
     // TFile *inputFile2 = new TFile("Energy_Pb.root","READ");
     
-    TFile *inputfile = new TFile("extract.root","READ");
+    TFile *inputfile = new TFile("exData.root","READ");
 
-    TH1D *Photonk = (TH1D*)inputfile->Get("PhotonK");
+    TH1D *Photonk = (TH1D*)inputfile->Get("vm Energy");
     TH1D *rapidity = (TH1D*)inputfile->Get("Rapidity");
 
      //Int_t nEvents = Photonk->GetNbinsX()+1;
+    UInt_t nEvents = Photonk->GetNbinsX();
 
     for(Int_t iEvent = 1 ; iEvent<=nEvents;iEvent++)
     { 
@@ -282,104 +283,141 @@ void computeModelBreakups(){
  * the 3 histogrmas corresponding to the 3 datasets are stored in extract.root
 */
 
-void extract()
+void exData()
 {
-    TFile *inputFile = new TFile("example_Pb.root", "READ");
+    TFile *file = new TFile("example_Pb.root","READ");
 
-    if (!inputFile->IsOpen() || inputFile->IsZombie()) {
-        std::cerr << "Error: Unable to open ROOT file '" << inputFile << "'.\n";
-        return;
-    }
+    TTree *tree = dynamic_cast<TTree*>(file->Get("tree"));
 
-    TTree *tree = dynamic_cast<TTree*>(inputFile->Get("tree"));
-
-    if (!tree) {
-        std::cerr << "Error: TTree 'tree' not found in the ROOT file.\n";
-        inputFile->Close();
-        return;
-    }
-
-    TFile *outputRootFile = new TFile("extract.root", "RECREATE");
-
-    exRapidity(tree, tree->GetBranch("vm"))->Write();
-    exEnergy(tree, tree->GetBranch("vm"))->Write();
-    exSection(exRapidity(tree, tree->GetBranch("vm")))->Write();
-
-    outputRootFile->Close();
-    inputFile->Close();
-}
-
-TH1D* exRapidity(TTree* tree, TBranch* branch)
-{
     TLorentzVector* lorentzVector = new TLorentzVector();
-    branch->SetAddress(&lorentzVector);
+    TLorentzVector* lovec = new TLorentzVector();
 
-    std::vector<double> rapidityValues;
+    TBranch *branch = tree->GetBranch("vm");
+    //TBranch *bch = tree->GetBranch("gamma");
+
+    branch->SetAddress(&lorentzVector);
+    //bch->SetAddress(&lovec);
 
     Long64_t nEntries = tree->GetEntries();
+
+    
+
+    
+    std::vector<double> rapidityValues;
+    std::vector<double> energyValues;
+
     for (Long64_t entry = 0; entry < nEntries; entry++) {
         branch->GetEntry(entry);
+        //bch->GetEntry(entry);
+
         Double_t rapidity = lorentzVector->Rapidity();
         rapidityValues.push_back(rapidity);
+
+        Double_t energy = lorentzVector->Energy();
+        energyValues.push_back(energy);
+        
+        //PhotonK->Fill(energy);
+        //Rapidity->Fill(rapidity);
+
     }
 
-    Double_t minRapidity = *std::min_element(rapidityValues.begin(), rapidityValues.end());
+    auto normalize = [](double& value) {value = std::round(value * 1000.0) / 1000.0;};
+
+    // std::for_each(minRapidity, maxRapidity, normalize);
+    // std::for_each(minEnergy, maxEnergy, normalize);
+
+    for (auto &value : rapidityValues) normalize(value);
+    for (auto &value : energyValues) normalize(value);
+
     Double_t maxRapidity = *std::max_element(rapidityValues.begin(), rapidityValues.end());
+    Double_t minRapidity = *std::min_element(rapidityValues.begin(), rapidityValues.end());
 
-    TH1D* histogram = new TH1D("Rapidity", "Rapidity", 100, minRapidity, maxRapidity);
+    Double_t minEnergy = *std::min_element(energyValues.begin(), energyValues.end());
+    Double_t maxEnergy = *std::max_element(energyValues.begin(), energyValues.end());
 
-    for (const auto& rapidity : rapidityValues) {
-        Double_t roundedRapidity = std::round(rapidity * 100.0) / 100.0;
-        histogram->Fill(roundedRapidity);
-    }
 
-    delete lorentzVector;
-    return histogram;
-}
+    //std::unordered_map<Double_t, Int_t> rapidityCounts;
+    //std::unordered_map<Double_t, Int_t> energyCounts;
 
-TH1D* exEnergy(TTree* tree, TBranch* branch)
-{
-    TLorentzVector* lorentzVector = new TLorentzVector();
-    branch->SetAddress(&lorentzVector);
+    //for(const auto &element : rapidityValues) rapidityCounts[element]+=1;
+    //for(const auto &element :energyValues) energyCounts[element]+=1;
 
-    std::vector<double> EnergyValues;
+    TH1D *PhotonK = new TH1D("PhotonK","PhotonK",1000,minEnergy,maxEnergy);
+    TH1D *vmEnergy = new TH1D("vm Energy","Vm Energy",1000,minEnergy,maxEnergy);
+    TH1D *Rapidity = new TH1D("Rapidity","Rapidity",1000,minRapidity,maxRapidity);
 
-    Long64_t nEntries = tree->GetEntries();
+    
+
     for (Long64_t entry = 0; entry < nEntries; entry++) {
-        branch->GetEntry(entry);
-        Double_t Energy = lorentzVector->Energy();
-        EnergyValues.push_back(Energy);
+        
+        //Double_t energy = energyValues[entry];
+        Double_t rapidity = rapidityValues[entry];
+        Double_t energy = 0.5*3.09*TMath::Exp(TMath::Abs(rapidity));
+        Double_t vmE = energyValues[entry];
+
+
+        PhotonK->Fill(energy);
+        Rapidity->Fill(rapidity);
+        vmEnergy->Fill(vmE);
+
     }
 
-    Double_t minEnergy = *std::min_element(EnergyValues.begin(), EnergyValues.end());
-    Double_t maxEnergy = *std::max_element(EnergyValues.begin(), EnergyValues.end());
+    TFile *file2 = new TFile("exData.root","RECREATE");
 
-    TH1D* histogram = new TH1D("PhotonK", "PhotonK", 100, minEnergy, maxEnergy);
+    PhotonK->Write();
+    Rapidity->Write();
+    vmEnergy->Write();
 
-    for (const auto& Energy : EnergyValues) {
-        Double_t roundedEnergy = std::round(Energy * 100.0) / 100.0;
-        histogram->Fill(roundedEnergy);
+
+    TH1D *xSection = new TH1D("xSection","xSection",1000,minRapidity,maxRapidity);
+
+    const Int_t cs = 524;//cross section 524 nb
+    const Int_t ne = 1e6;//Number of events 1M
+
+    Double_t xSectionValue = 0;
+
+    for(Long64_t index = 1; index <=1000; index++)
+    {
+        Double_t binValue = Rapidity->GetBinContent(index);
+        //Double_t binWidth = Rapidity->GetBinWidth(index);
+
+        xSectionValue = binValue * cs / ne ;//binWidth ;
+
+        xSection->SetBinContent(index, xSectionValue);
     }
 
+    xSection->Write();
+
+    TCanvas* c1 = new TCanvas("c1","c1");
+        Rapidity->Draw();
+    TCanvas* c2 = new TCanvas("c2","c2");
+        xSection->Draw();
+    TCanvas* c3 = new TCanvas("c3","c3");
+        PhotonK->Draw();
+    TCanvas* c4 = new TCanvas("c4","c4");
+        vmEnergy->Draw();
+
+    c1->SaveAs("Rapidity.png");
+    c2->SaveAs("xSection.png");
+    c3->SaveAs("PhotonK.png");
+    c4->SaveAs("vmEnergy.png");
+
+
+    file->Close();
+    file2->Close();
+
+    delete file;
+    delete file2;
     delete lorentzVector;
-    return histogram;
-}
+    delete branch;
+    //delete bch;
+    //delete lovec;
+    delete c1;
+    delete c2;
+    delete c3;
+    delete c4;
 
-TH1D* exSection(TH1D* histogram)
-{
-    TH1D* xSectionHistogram = new TH1D("XSection", "X Section", histogram->GetNbinsX(), histogram->GetXaxis()->GetXmin(), histogram->GetXaxis()->GetXmax());
+    
 
-    double xSectionValue = 0;
 
-    for (int binIndex = 1; binIndex <= histogram->GetNbinsX(); ++binIndex) {
-        double binContent = histogram->GetBinContent(binIndex);
-        double binWidth = histogram->GetBinWidth(binIndex);
-
-        xSectionValue = (binContent * 524 / 100) ;// binWidth;
-
-        xSectionHistogram->SetBinContent(binIndex, xSectionValue);
-    }
-
-    xSectionHistogram->Write();
-    return xSectionHistogram;
 }

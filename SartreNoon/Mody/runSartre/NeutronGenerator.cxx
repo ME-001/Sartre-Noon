@@ -206,10 +206,10 @@ void NeutronGenerator::GenerateEvent(const Double_t photonK)
       for(Int_t j = i; j < maxNeutrons; j++){
         if(i != j)hEventBreakupMap->SetBinContent(FromMatrixToVector(i,j)+1,2.0*GetBreakupProbability(photonK,i,j));
 	      if(i == j)hEventBreakupMap->SetBinContent(FromMatrixToVector(i,j)+1,GetBreakupProbability(photonK,i,j));
-	}
+	      }
       }
       
-    Int_t randBin = hEventBreakupMap->FindBin(hEventBreakupMap->GetRandom())-1;
+    Int_t randBin = hEventBreakupMap->FindBin(hEventBreakupMap->GetRandom())-1; // why ??
     FromVectorToMatrix(randBin,nNeutronsBeam1,nNeutronsBeam2);
     }
     
@@ -298,8 +298,14 @@ void NeutronGenerator::CreateNeutrons(const Int_t nNeutronsBeam1, const Int_t nN
     for(Int_t i = 0; i<nNeutrons[side]; i++){
       energyKin = hENDF_1D->GetRandom();
       mom = TMath::Sqrt((energyKin + neutron_M)*(energyKin + neutron_M) - neutron_M*neutron_M);
-      phi = 2*pi*gRandom->Rndm();
+      /**
+      * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CONCERN !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      */
+      phi = 2*pi*gRandom->Rndm();//         CONCERN !!
       theta = pi*gRandom->Rndm();
+      /**
+      *!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CONCERN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      */
 
       hKinEnergyGen->Fill(energyKin);
       vec.SetXYZM(mom*TMath::Sin(theta)*TMath::Cos(phi),mom*TMath::Sin(theta)*TMath::Sin(phi), mom*TMath::Cos(theta), neutron_M);
@@ -964,7 +970,7 @@ void NeutronGenerator::InitQAhistograms(){
   fQAhistList = new TList();
   fQAhistList ->SetOwner();
     
-  hNeutronMultiplicity = CreateHist2D("hNeutronMultiplicity","Neutron multiplicity",5,0,5,5,0,5,"Number of neutrons (beam 1)","Number of neutrons (beam 2)","Counts");
+  hNeutronMultiplicity = CreateHist2D("hNeutronMultiplicity","Neutron multiplicity",50,0,50,50,0,50,"Number of neutrons (beam 1)","Number of neutrons (beam 2)","Counts");
   fQAhistList->Add(hNeutronMultiplicity);
   
   hEnergyGen = CreateHist1D("hEnergyGen","Generated energy before boost",3000,900,1200,"Energy [MeV]","Counts");

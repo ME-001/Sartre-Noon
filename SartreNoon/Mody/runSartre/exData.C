@@ -5,18 +5,36 @@
  * 
 */
 
-
-
+#ifdef __CLING__
 #include <iostream>
+#include <fstream>
+#include <string>
+
+#include "TROOT.h"
+#include "TH1.h"
+#include "TH1D.h"
+#include "TH2D.h"
+#include "TString.h"
+#include "TGraph.h"
+#include "TCanvas.h"
+#include "TLegend.h"
+#include "NeutronGenerator.cxx+g"
+
 #include <vector>
 #include "TFile.h"
 #include "TTree.h"
 #include "TLorentzVector.h"
-#include "TH1D.h"
 #include <cmath>
-#include "TCanvas.h"
-#include "TGraph.h"
+
+#include "TFile.h"
+#include "TTree.h"
+#include "TLorentzVector.h"
+#include <cmath>
 #include "TMath.h"
+#include "TDatabasePDG.h"
+
+#include "NeutronGenerator.h"
+#endif
 
 void exData()
 {
@@ -36,8 +54,6 @@ void exData()
     Long64_t nEntries = tree->GetEntries();
 
     
-
-    
     std::vector<double> rapidityValues;
     std::vector<double> energyValues;
 
@@ -55,8 +71,12 @@ void exData()
         //Rapidity->Fill(rapidity);
 
     }
+    delete lorentzVector;
+    delete tree;
+    file->Close();
+    delete file;
 
-    auto normalize = [](double& value) {value = std::round(value * 1000.0) / 1000.0;};
+    auto normalize = [](double& value) {value = std::round(value * 100.0) / 100.0;};
 
     // std::for_each(minRapidity, maxRapidity, normalize);
     // std::for_each(minEnergy, maxEnergy, normalize);
@@ -70,6 +90,67 @@ void exData()
     Double_t minEnergy = *std::min_element(energyValues.begin(), energyValues.end());
     Double_t maxEnergy = *std::max_element(energyValues.begin(), energyValues.end());
 
+    #if defined(__CINT__)
+        gROOT->LoadMacro("NeutronGenerator.cxx+g");
+    #endif
+    
+    TClonesArray *fParticles = new TClonesArray("TParticle", energyValues.size());
+    TTree *Tree = new TTree("Tree", "Tree");
+    Tree ->Branch("fParticles", &fParticles);
+
+    TClonesArray *fNGparticles = NULL;
+
+
+    NeutronGenerator *gen = new NeutronGenerator();
+
+    gen->SetStoreQA();
+    gen->SetStoreGeneratorFunctions();
+    gen->SetHadronicInteractionModel(NeutronGenerator::kGlauber);
+    gen->Initialize();
+    gen->SetRunMode(NeutronGenerator::kInterface);
+    gen->ReadENDF(kTRUE);
+    gen->LoadENDF("hENDF.root");
+    gen->Setup();
+
+
+    Double_t  VMR = 0;
+    Double_t VMmass = 3.09; //  j/psi mass
+    Double_t photonK = 0;
+
+    cout<<"Running production"<<endl; 
+
+    UInt_t nEvents = energyValues.size();
+
+    for(Int_t iEvent = 0; iEvent < nEvents; ++iEvent)
+    {   
+        photonK = energyValues[iEvent];
+
+        VMR = rapidityValues[iEvent];
+
+        //NeutronGenerator::hRapidityVM->Fill(VMR);
+        //NeutronGenerator::hMassVM->Fill(VMmass);
+
+        gen->GenerateEvent(photonK);
+        Int_t nTotalPart = 0; 
+        fNGparticles = gen->ImportParticles();
+        for(Int_t i = 0; i<fNGparticles->GetEntriesFast(); i++)
+        {
+            TParticle *part(dynamic_cast<TParticle*>(fNGparticles->At(i)));
+            new((*fParticles)[nTotalPart++]) TParticle(*part);
+        }
+        gen->FinishEvent();
+    
+        Tree->Fill();
+        fParticles->Clear("C");
+
+        gen->FinishEvent();
+    }
+
+    gen->FinishProduction();
+    cout<<"Finish production"<<endl;
+    TFile *fOutputFile = new TFile("output.root","RECREATE");
+    Tree->Write();
+
 
     //std::unordered_map<Double_t, Int_t> rapidityCounts;
     //std::unordered_map<Double_t, Int_t> energyCounts;
@@ -77,9 +158,9 @@ void exData()
     //for(const auto &element : rapidityValues) rapidityCounts[element]+=1;
     //for(const auto &element :energyValues) energyCounts[element]+=1;
 
-    TH1D *PhotonK = new TH1D("PhotonK","PhotonK",1000,minEnergy,maxEnergy);
-    TH1D *vmEnergy = new TH1D("vm Energy","Vm Energy",1000,minEnergy,maxEnergy);
-    TH1D *Rapidity = new TH1D("Rapidity","Rapidity",1000,minRapidity,maxRapidity);
+    TH1D *PhotonK = new TH1D("PhotonK","PhotonK",100,minEnergy,maxEnergy);
+    TH1D *vmEnergy = new TH1D("vm Energy","Vm Energy",100,minEnergy,maxEnergy);
+    TH1D *Rapidity = new TH1D("Rapidity","Rapidity",100,minRapidity,maxRapidity);
 
     
 
@@ -104,14 +185,14 @@ void exData()
     vmEnergy->Write();
 
 
-    TH1D *xSection = new TH1D("xSection","xSection",1000,minRapidity,maxRapidity);
+    TH1D *xSection = new TH1D("xSection","xSection",100,minRapidity,maxRapidity);
 
     const Int_t cs = 524;//cross section 524 nb
-    const Int_t ne = 1e6;//Number of events 1M
+    const Int_t ne = 10000;//Number of events 1M
 
     Double_t xSectionValue = 0;
 
-    for(Long64_t index = 1; index <=1000; index++)
+    for(Long64_t index = 1; index <=100; index++)
     {
         Double_t binValue = Rapidity->GetBinContent(index);
         //Double_t binWidth = Rapidity->GetBinWidth(index);
@@ -137,20 +218,20 @@ void exData()
     c3->SaveAs("PhotonK.png");
     c4->SaveAs("vmEnergy.png");
 
-
-    file->Close();
     file2->Close();
-
-    delete file;
     delete file2;
-    delete lorentzVector;
-    delete branch;
+    fOutputFile->Close();
+
+    
+
+
     //delete bch;
     //delete lovec;
     delete c1;
     delete c2;
     delete c3;
     delete c4;
+
 
     
 
