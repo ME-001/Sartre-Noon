@@ -53,7 +53,7 @@ xpomMax = 0
 # 
 #  Number of events and printout frequency 
 # 
-numberOfEvents =  10000
+numberOfEvents =  100000
 timesToShow    =  20
  
 # 
