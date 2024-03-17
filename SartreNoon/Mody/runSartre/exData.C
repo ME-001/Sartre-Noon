@@ -76,13 +76,13 @@ void exData()
     file->Close();
     delete file;
 
-    auto normalize = [](double& value) {value = std::round(value * 100.0) / 100.0;};
+    // auto normalize = [](double& value) {value = std::round(value * 100.0) / 100.0;};
 
     // std::for_each(minRapidity, maxRapidity, normalize);
     // std::for_each(minEnergy, maxEnergy, normalize);
 
-    for (auto &value : rapidityValues) normalize(value);
-    for (auto &value : energyValues) normalize(value);
+    // for (auto &value : rapidityValues) normalize(value);
+    // for (auto &value : energyValues) normalize(value);
 
     Double_t maxRapidity = *std::max_element(rapidityValues.begin(), rapidityValues.end());
     Double_t minRapidity = *std::min_element(rapidityValues.begin(), rapidityValues.end());
@@ -148,7 +148,7 @@ void exData()
 
     gen->FinishProduction();
     cout<<"Finish production"<<endl;
-    TFile *fOutputFile = new TFile("output.root","RECREATE");
+    TFile *fOutputFile = new TFile("output1.root","RECREATE");
     Tree->Write();
 
 
@@ -158,9 +158,9 @@ void exData()
     //for(const auto &element : rapidityValues) rapidityCounts[element]+=1;
     //for(const auto &element :energyValues) energyCounts[element]+=1;
 
-    TH1D *PhotonK = new TH1D("PhotonK","PhotonK",100,minEnergy,maxEnergy);
-    TH1D *vmEnergy = new TH1D("vm Energy","Vm Energy",100,minEnergy,maxEnergy);
-    TH1D *Rapidity = new TH1D("Rapidity","Rapidity",100,minRapidity,maxRapidity);
+    TH1D *PhotonK = new TH1D("PhotonK","PhotonK",1000,minEnergy,maxEnergy);
+    TH1D *vmEnergy = new TH1D("vm Energy","Vm Energy",1000,minEnergy,maxEnergy);
+    TH1D *Rapidity = new TH1D("Rapidity","Rapidity",1000,minRapidity,maxRapidity);
 
     
 
@@ -185,14 +185,14 @@ void exData()
     vmEnergy->Write();
 
 
-    TH1D *xSection = new TH1D("xSection","xSection",100,minRapidity,maxRapidity);
+    TH1D *xSection = new TH1D("xSection","xSection",1000,minRapidity,maxRapidity);
 
     const Int_t cs = 524;//cross section 524 nb
-    const Int_t ne = 10000;//Number of events 1M
+    const Int_t ne = 100000;//Number of events 1M
 
     Double_t xSectionValue = 0;
 
-    for(Long64_t index = 1; index <=100; index++)
+    for(Long64_t index = 1; index <=1000; index++)
     {
         Double_t binValue = Rapidity->GetBinContent(index);
         //Double_t binWidth = Rapidity->GetBinWidth(index);
@@ -232,8 +232,6 @@ void exData()
     delete c3;
     delete c4;
 
-
-    
 
 
 }

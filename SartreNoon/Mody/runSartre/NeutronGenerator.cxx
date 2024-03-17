@@ -167,18 +167,21 @@ void NeutronGenerator::Run(const UInt_t nEvents)
       cout<<100*iEvent/nEvents<<"% "<<endl;
       }
       
-    if(fRunMode == kMassRapidity){
+    if(fRunMode == kMassRapidity)
+    {
       do VMmass = hInputMass->GetRandom(); while(VMmass>fMassMax || VMmass<fMassMin);
       do VMrapidity = hInputRapidity->GetRandom(); while(!((VMrapidity<fRapMax && VMrapidity>fRapMin) || (VMrapidity> -1*fRapMax && VMrapidity< -1*fRapMin)));
       hMassVM->Fill(VMmass);
       hRapidityVM->Fill(VMrapidity);
-      if(VMrapidity<fRapMax && VMrapidity>fRapMin){ 
+      if(VMrapidity<fRapMax && VMrapidity>fRapMin)
+      { 
         photonK = 0.5*VMmass*TMath::Exp(-1*VMrapidity);
-	}
-      else if(VMrapidity> -1*fRapMax && VMrapidity< -1*fRapMin){
+	    }
+      else if(VMrapidity> -1*fRapMax && VMrapidity< -1*fRapMin)
+      {
         photonK = 0.5*VMmass*TMath::Exp(VMrapidity);
-	}
-      }
+	    }
+    }
     
     if(fRunMode == kFlatMultiplicity || fRunMode == k1n1n) photonK = -1;
 
@@ -238,7 +241,7 @@ Double_t NeutronGenerator::GetTotalFlux(const Double_t photonK)
 //______________________________________________________________________________
 void NeutronGenerator::FinishProduction(){
 
-  if(fRunMode == kMassRapidity || fRunMode == kFlatMultiplicity || fRunMode == k1n1n || kStoreQA || kStoreGen ||kInterface)fOutputFile = new TFile("noon.root","RECREATE");
+  if(fRunMode == kMassRapidity || fRunMode == kFlatMultiplicity || fRunMode == k1n1n || kStoreQA || kStoreGen ||kInterface)fOutputFile = new TFile("noon1.root","RECREATE");
   if(kStoreQA)fQAhistList->Write();
   if(kStoreGen){
     if(gNuclearThickness)gNuclearThickness->Write();

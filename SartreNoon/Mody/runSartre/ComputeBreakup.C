@@ -49,7 +49,7 @@ void ComputeBreakup()
     gen->SetRapidityCut(-4.0,4.0);
     gen->SetStoreQA();
     gen->SetStoreGeneratorFunctions();
-    gen->SetHadronicInteractionModel(NeutronGenerator::kHardSphere); 
+    gen->SetHadronicInteractionModel(NeutronGenerator::kGlauber); 
     gen->Initialize(); 
     gen->SetRunMode(NeutronGenerator::kInterface);  
     gen->ReadENDF(kFALSE);
