@@ -52,6 +52,8 @@
         "typeinfo": "cpp",
         "ComputeBreakup.C": "cpp",
         "runBreakup.C": "cpp",
-        "runB.C": "cpp"
+        "runB.C": "cpp",
+        "chrono": "cpp",
+        "runSartre.C": "cpp"
     }
 }
