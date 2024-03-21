@@ -36,19 +36,6 @@
 #include "NeutronGenerator.h"
 #endif
 
-void myLegendSetUp(TLegend *currentLegend=0,float currentTextSize=0.07,int columns=2)
-{
-  currentLegend->SetTextFont(42);
-  currentLegend->SetBorderSize(0);
-  currentLegend->SetFillStyle(0);
-  currentLegend->SetFillColor(0);
-  currentLegend->SetMargin(0.25);
-  currentLegend->SetTextSize(currentTextSize);
-  currentLegend->SetEntrySeparation(0.5);
-  currentLegend->SetNColumns(columns);
-  return;
-}
-
 void runSartre()
 {   
     Double_t  VMR = 0;
@@ -249,49 +236,10 @@ void runSartre()
 
         xSection->SetBinContent(index, xSectionValue);
 
-        for(Int_t k=0; k<4 ;++k)
-        {
-            prob[k] = 0;
-
-            for(Int_t iEvent = 0; iEvent<100  ;++ne)
-            {
-                Double_t vmm = massHist->GetRandom();
-                Double_t pk = 0.5*vmm*TMath::Exp(TMath::Abs(rpdt));
-                if(k == 0)
-                {
-  	                prob[k] += 1.0;
-                    
-                }
-                if(k == 1)
-                {   
-                    
-  	                prob[k] += gen->GetBreakupProbability(pk, 0, 0); 
-                    
-  	            }
-                if(k == 2)
-                {
-  	                prob[k] += gen->GetBreakupProbability(pk, -1, 0); 
-                    
-  	            }
-                if(k == 3)
-                {
-  	                prob[k] += gen->GetBreakupProbability(pk, -1, -1); 
-                    
-  	            }
-                
-
-            }
-            prob[k] = prob[k]/numberOfbins;
-            hRapidityBreakup[k]->SetBinContent(index, xSectionValue*prob[k]);
-
-        }
-
         
     }
 
-    xSection->Write();
-    file2->Close();
-    delete file2;
+    
     
 
     TCanvas* d1 = new TCanvas("d1","d1");
@@ -308,73 +256,15 @@ void runSartre()
     d3->SaveAs("PhotonK.png");
     d4->SaveAs("vmEnergy.png");
 
+    xSection->Write();
+    file2->Close();
+    delete file2;
     
 
     delete d1;
     delete d2;
     delete d3;
     delete d4;
-
-    
-
-    TCanvas *c1 = new TCanvas("c1","c1",0,0,800,800);
-    TCanvas *c2 = new TCanvas("c2","c2",0,0,800,800);
-    TCanvas *c3 = new TCanvas("c3","c3",0,0,800,800);
- 
-    c1->cd();  
-    hRapidityBreakup[0]->GetYaxis()->SetRangeUser(0,40);
-    hRapidityBreakup[0]->DrawCopy();
-
-    for(Int_t k=1; k<4; k++) hRapidityBreakup[k]->DrawCopy("same");
-
-    gPad->SetGridy();gPad->SetGridx();
-    c2->cd();
-
-    for(Int_t k=1; k<4; k++)
-    {
-        hRapidityBreakup[k]->Divide(hRapidityBreakup[0]);
-        hRapidityBreakup[k]->GetYaxis()->SetRangeUser(0.001,0.9);
-        if(k == 1)hRapidityBreakup[k]->DrawCopy();
-        hRapidityBreakup[k]->DrawCopy("same");
-    }
-    gPad->SetGridy();gPad->SetGridx();
-    c3->cd();
-    gPad->SetLogy();
-
-    for(Int_t k=0; k<4; k++)
-    { 
-        hRapidityBreakup[k]->GetYaxis()->SetRangeUser(0.01,1);
-        if(k == 0)hRapidityBreakup[k]->DrawCopy();
-        hRapidityBreakup[k]->DrawCopy("same");
-    }
-  
-    TLegend *myLegend1 = new TLegend(0.42,0.29,0.69,0.48);
-    myLegendSetUp(myLegend1,0.04,1);
-    myLegend1->AddEntry(hRapidityBreakup[0],"All","l");
-    myLegend1->AddEntry(hRapidityBreakup[1],"0n0n","l");
-    myLegend1->AddEntry(hRapidityBreakup[2],"0nXn","l");
-    myLegend1->AddEntry(hRapidityBreakup[3],"XnXn","l");
-    c1->cd(); myLegend1->Draw();
-  
-    TLatex *noontitle = new TLatex(0.45,0.83,"Sartre + #bf{n_{O}^{O}n}");//"Hot-spot model + #bf{n_{O}^{O}n}");
-    noontitle->SetNDC();
-    noontitle->SetTextFont(42);
-    noontitle->SetTextSize(0.04);
-    noontitle->Draw();
-  
-    TLegend *myLegend2 = new TLegend(0.42,0.29,0.69,0.48);
-    myLegendSetUp(myLegend2,0.04,1);
-    myLegend2->AddEntry(hRapidityBreakup[1],"0n0n/All","l");
-    myLegend2->AddEntry(hRapidityBreakup[2],"0nXn/All","l");
-    myLegend2->AddEntry(hRapidityBreakup[3],"XnXn/All","l");
-    c2->cd(); myLegend2->Draw();
-    c3->cd(); myLegend2->Draw();
-
-
-
-    
-    
-
 
 
 }
