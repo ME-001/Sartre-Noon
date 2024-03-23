@@ -159,13 +159,8 @@ void exData()
     std::vector<double> prob3;
     
 
-
-
     for(Int_t iEvent = 0; iEvent < nEvents; ++iEvent)
     {   
-        photonK = phk[iEvent];
-
-        VMR = rapidityValues[iEvent];
 
         //NeutronGenerator::hRapidityVM->Fill(VMR);
         //NeutronGenerator::hMassVM->Fill(VMmass);
@@ -184,25 +179,6 @@ void exData()
         fParticles->Clear("C");
 
         gen->FinishEvent();
-
-        for(Int_t k=0; k<4;++k)
-        {
-            
-            if(k == 1)
-            {
-                prob1.push_back(gen->GetBreakupProbability(photonK,0,0));
-            }
-            if(k = 2)
-            {
-                prob2.push_back(gen->GetBreakupProbability(photonK,-1,0));
-            }
-            if(k ==3)
-            {
-                prob3.push_back(gen->GetBreakupProbability(photonK,-1,-1));
-            }
-            
-        }
-
         
     }
 
@@ -227,6 +203,10 @@ void exData()
     Double_t mean = VMmass;
     Double_t sd = 0.01;
 
+    TH1D *prob = new TH1D("Prob","Prob",numberOfbins,minRapidity,maxRapidity);  
+    
+    std::vector<double> prb;
+
     for (Long64_t entry = 0; entry < nEntries; entry++) 
     {
         
@@ -243,6 +223,9 @@ void exData()
         vmEnergy->Fill(vmE);
 
         massHist->Fill(massValue);
+
+        
+
 
     }
 

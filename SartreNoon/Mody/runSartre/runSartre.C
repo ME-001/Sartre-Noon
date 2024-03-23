@@ -266,5 +266,4 @@ void runSartre()
     delete d3;
     delete d4;
 
-
 }
