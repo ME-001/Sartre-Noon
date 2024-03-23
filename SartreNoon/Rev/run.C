@@ -91,8 +91,8 @@ void run()
         rpHist->Fill(rp[i]);
     }
 
-    TFile *file2 = new TFile("temp.root","RECREATE");
-    rpHist->Write();
+    // TFile *file2 = new TFile("temp.root","RECREATE");
+    // rpHist->Write();
 
 //================================================================================================================
     /**
@@ -132,8 +132,8 @@ void run()
 
     gen->FinishProduction();
 
-    file2->Close();
-    delete file2;
+    // file2->Close();
+    // delete file2;
 
 
 
