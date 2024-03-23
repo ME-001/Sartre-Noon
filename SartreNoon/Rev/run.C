@@ -7,18 +7,34 @@
 
 
 #ifdef __CLING__
-
 #include <iostream>
-#include <stdio>
+#include <fstream>
+#include <string>
 
-#include "TTree.h"
-#include "<vector>"
-#include "TFile.h"
 #include "TROOT.h"
-#include "NeutronGenerator.h"
+#include "TH1.h"
+#include "TH1D.h"
+#include "TH2D.h"
+#include "TString.h"
+#include "TGraph.h"
+#include "TCanvas.h"
+#include "TLegend.h"
 #include "NeutronGenerator.cxx+g"
-#include "TRandom.h"
 
+#include <vector>
+#include "TFile.h"
+#include "TTree.h"
+#include "TLorentzVector.h"
+#include <cmath>
+
+#include "TFile.h"
+#include "TTree.h"
+#include "TLorentzVector.h"
+#include <cmath>
+#include "TMath.h"
+#include "TDatabasePDG.h"
+
+#include "NeutronGenerator.h"
 #endif
 
 //using namespace std;
@@ -26,6 +42,9 @@
 void run()
 {
 
+    #if defined(__CLINT__)
+        gROOT->LoadMacro("NeutronGenerator.cxx+g");
+    #endif
     //Variables
 
     Double_t mv =3.09; //unit in Gev 
@@ -47,15 +66,12 @@ void run()
     Long64_t nE = tree->GetEntries();
 
     std::vector<double> rp;
-    std::vector<double> phk;
 
     for(Long64_t i = 0; i<nE; ++i)
     {
         bc->GetEntry(i);
 
         rp.push_back(lv->Rapidity());
-
-        phk.push_back(0.5*mv*TMath::Exp(TMath::(Abs(lv->Rapidity()))));
     }
 
     delete lv;
@@ -63,34 +79,21 @@ void run()
     file->Close();
     delete file;
 
-    Double_t maxphk = *std::max_element(phk.begin(),phk.end());
-    Double_t minphk = *std::max_element(phk.begin(),phk.end());
-
     Double_t maxrp = *std::max_element(rp.begin(),rp.end());
     Double_t minrp = *std::max_element(rp.begin(),rp.end());
 
-    #if defined(__CLINT__)
-        gROOT->LoadMacro("NeutronGenerator.cxx+g");
-    #endif
+    
 
-    TH1D *phkHist = new TH1D("PhotonK","PhotonK",nB,minphk,maxphk);
     TH1D *rpHist = new TH1D("Rapidity", "Rapidity",nB,minrp,maxrp);
 
     for(Int_t i = 0; i<nE; ++i)
     {
-        phkHist->Fill(phk[i]);
-
         rpHist->Fill(rp[i]);
-
     }
 
     TFile *file2 = new TFile("temp.root","RECREATE");
-
-    phkHist->Write();
     rpHist->Write();
 
-    file2->Close();
-    delete file2;
 //================================================================================================================
     /**
      * Till now I have created a histogram of the data 
@@ -113,18 +116,25 @@ void run()
 
     TRandom rm;
 
-    for(Int_t i = 0; i<nE; ++i)
-    {   
-        Int_t ei = rm.Integer(phk.size());
-        Double_t phki = phk[ei];
-        Double_t rpi = rp[ei];
+    std::vector<double> dp;
+    std:vector<double> phk;
 
-        gen->GenerateEvent(phki);
+    for(Int_t i = 0; i<nE; ++i)
+    {  
+        Double_t y = rpHist->GetRandom();
+        
+        Double_t k = 0.5*mv*TMath::Exp(TMath::Abs(y));
+
+        gen->GenerateEvent(k);
         gen->FinishEvent();
 
     }
 
-    
+    gen->FinishProduction();
+
+    file2->Close();
+    delete file2;
+
 
 
 }
