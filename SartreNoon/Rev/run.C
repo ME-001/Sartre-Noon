@@ -94,6 +94,8 @@ void run()
 //================================================================================================================
     /**
      * Till now I have created a histogram of the data 
+     * I Probably don't need to create histogram
+     * Will check that later
      * Next I will select data random from the data.
     */
 //=================================================================================
@@ -118,14 +120,11 @@ void run()
         Double_t rpi = rp[ei];
 
         gen->GenerateEvent(phki);
-        
+        gen->FinishEvent();
+
     }
 
     
-
-
-
-
 
 
 }
