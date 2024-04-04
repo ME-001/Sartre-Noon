@@ -245,7 +245,7 @@ void exData()
 
     
 
-    Double_t prob[4];
+    // Double_t prob[4];
 
     for(Long64_t index = 1; index <=numberOfbins; index++)
     {

@@ -20,6 +20,7 @@
 
 #include "NeutronGenerator.h"
 
+
 ClassImp(NeutronGenerator)
 
 //_____________________________________________________________________________
@@ -38,7 +39,7 @@ NeutronGenerator::NeutronGenerator()
   , nFluxes(2+(maxNeutrons)*(maxNeutrons+1)/2)
   , nucleus_Z(82)
   , nucleus_A(208)
-  , beamGamma(2942)
+  , beamGamma(2942) //needs to be changed 
   , gammaTarget(2.0*beamGamma*beamGamma-1.0)
   , neutronSepThr(0.0)
   , saturationEnergy(1e6)
@@ -112,83 +113,23 @@ NeutronGenerator::~NeutronGenerator()
   if(fQAhistList){delete fQAhistList; fQAhistList = NULL;}
 }
 //______________________________________________________________________________
+
 void NeutronGenerator::SetRunMode(RunMode_t mode,const char *filename, const char *name1, const char *name2)
 {
   fRunMode = mode;
-  
-  if(fRunMode == kMassRapidity){
-    TFile *inputFile = new TFile(filename,"READ");
-    hInputMass = (TH1*)inputFile->Get(name1);
-    hInputMass->SetDirectory(0);
-    hInputRapidity = (TH1*)inputFile->Get(name2);
-    hInputRapidity->SetDirectory(0);
-    inputFile->Close();
-    delete inputFile;
-    }
-    
-  if(fRunMode == kStarlightAscii){
-    fInputStarlightAscii.open(filename);
-    std::string newLine;
-    getline(fInputStarlightAscii,newLine);
-    fOutputStarlightAscii.open(name1);
-    fOutputStarlightAscii<<newLine<<endl;
-    }
-   if(fRunMode == kFlatMultiplicity){}
-   if(fRunMode == kInterface){}
-   if(fRunMode == k1n1n){}
-}
-//______________________________________________________________________________
-void NeutronGenerator::Setup(){
-
- fParticles = new TClonesArray("TParticle", 200);
-  if(fRunMode == kMassRapidity || fRunMode == kFlatMultiplicity || fRunMode == k1n1n){
-    fEventTree = new TTree("fEventTree", "fEventTree");
-    fEventTree ->Branch("fParticles", &fParticles);
-    fParticles ->BypassStreamer();
-    }
-  if(fRunMode == kStarlightAscii){}
+  if(fRunMode == kFlatMultiplicity){}
   if(fRunMode == kInterface){}
   if(fRunMode == k1n1n){}
 }
 //______________________________________________________________________________
-void NeutronGenerator::Run(const UInt_t nEvents)
-{
-  TDatabasePDG pdgData;
-  if(fRunMode == kInterface){cout<<"This method is obsolette in interface mode"; return;}
-  Double_t VMrapidity = 0;
-  Double_t VMmass = 0;
-  Double_t photonK = 0;
-  
-  cout<<"Running production"<<endl; 
-  
-  for(iEvent = 0; iEvent<=nEvents; iEvent++){
-    if(iEvent%(nEvents/10) == 0){
-      if(iEvent != 0){ printf("\033[1A"); printf("\033[K");}   
-      cout<<100*iEvent/nEvents<<"% "<<endl;
-      }
-      
-    if(fRunMode == kMassRapidity)
-    {
-      do VMmass = hInputMass->GetRandom(); while(VMmass>fMassMax || VMmass<fMassMin);
-      do VMrapidity = hInputRapidity->GetRandom(); while(!((VMrapidity<fRapMax && VMrapidity>fRapMin) || (VMrapidity> -1*fRapMax && VMrapidity< -1*fRapMin)));
-      hMassVM->Fill(VMmass);
-      hRapidityVM->Fill(VMrapidity);
-      if(VMrapidity<fRapMax && VMrapidity>fRapMin)
-      { 
-        photonK = 0.5*VMmass*TMath::Exp(-1*VMrapidity);
-	    }
-      else if(VMrapidity> -1*fRapMax && VMrapidity< -1*fRapMin)
-      {
-        photonK = 0.5*VMmass*TMath::Exp(VMrapidity);
-	    }
-    }
-    
-    if(fRunMode == kFlatMultiplicity || fRunMode == k1n1n) photonK = -1;
 
-    GenerateEvent(photonK);
-    FinishEvent();
-    }
-  FinishProduction();
+void NeutronGenerator::Setup(){
+
+ fParticles = new TClonesArray("TParticle", 200);
+ 
+  if(fRunMode == kStarlightAscii){}
+  if(fRunMode == kInterface){}
+  if(fRunMode == k1n1n){}
 }
 //______________________________________________________________________________
 void NeutronGenerator::GenerateEvent(const Double_t photonK)
@@ -196,30 +137,23 @@ void NeutronGenerator::GenerateEvent(const Double_t photonK)
   if(fRunMode != kFlatMultiplicity && fRunMode != k1n1n)hPhotonK->Fill(photonK);
   Int_t nNeutronsBeam1 = 0, nNeutronsBeam2 = 0;
   
-  if(fRunMode == kFlatMultiplicity){
-    nNeutronsBeam1 = maxNeutrons*gRandom->Rndm(); 
-    nNeutronsBeam2 = maxNeutrons*gRandom->Rndm();
-    }
-  else if(fRunMode == k1n1n){
-    nNeutronsBeam1 = 1; 
-    nNeutronsBeam2 = 1;
-    }
-  else{ 
-    for(Int_t i = 0; i < maxNeutrons; i++){ 
-      for(Int_t j = i; j < maxNeutrons; j++){
-        if(i != j)hEventBreakupMap->SetBinContent(FromMatrixToVector(i,j)+1,2.0*GetBreakupProbability(photonK,i,j));
-	      if(i == j)hEventBreakupMap->SetBinContent(FromMatrixToVector(i,j)+1,GetBreakupProbability(photonK,i,j));
-	      }
-      }
+  for(Int_t i = 0; i < maxNeutrons; i++)
+  { 
+    for(Int_t j = i; j < maxNeutrons; j++)
+    {
+      if(i != j)hEventBreakupMap->SetBinContent(FromMatrixToVector(i,j)+1,2.0*GetBreakupProbability(photonK,i,j));
+	    if(i == j)hEventBreakupMap->SetBinContent(FromMatrixToVector(i,j)+1,GetBreakupProbability(photonK,i,j));
+	  }
+  }
       
-    Int_t randBin = hEventBreakupMap->FindBin(hEventBreakupMap->GetRandom())-1; // why ??
-    FromVectorToMatrix(randBin,nNeutronsBeam1,nNeutronsBeam2);
-    }
+  Int_t randBin = hEventBreakupMap->FindBin(hEventBreakupMap->GetRandom())-1; // why ??
+  FromVectorToMatrix(randBin,nNeutronsBeam1,nNeutronsBeam2);//the function modifies the pointers
     
-    if(nNeutronsBeam1 != nNeutronsBeam2 && gRandom->Rndm()<0.5)CreateNeutrons(nNeutronsBeam2,nNeutronsBeam1);
-    else CreateNeutrons(nNeutronsBeam1,nNeutronsBeam2);
+  if(nNeutronsBeam1 != nNeutronsBeam2 && gRandom->Rndm()<0.5)CreateNeutrons(nNeutronsBeam2,nNeutronsBeam1);
+  else CreateNeutrons(nNeutronsBeam1,nNeutronsBeam2);
 }
 //______________________________________________________________________________
+
 Double_t NeutronGenerator::GetBreakupProbability(const Double_t photonK, const Int_t nNeutronsBeam1, const Int_t nNeutronsBeam2)
 {
 
@@ -239,9 +173,11 @@ Double_t NeutronGenerator::GetTotalFlux(const Double_t photonK)
   return gPhotonFluxTable[0].Eval(photonK);
 }
 //______________________________________________________________________________
+//______________________________________________________________________________
 void NeutronGenerator::FinishProduction(){
 
   if(fRunMode == kMassRapidity || fRunMode == kFlatMultiplicity || fRunMode == k1n1n || kStoreQA || kStoreGen ||kInterface)fOutputFile = new TFile("noon1.root","RECREATE");
+  
   if(kStoreQA)fQAhistList->Write();
   if(kStoreGen){
     if(gNuclearThickness)gNuclearThickness->Write();
@@ -261,56 +197,42 @@ void NeutronGenerator::FinishProduction(){
   if(fOutputFile)fOutputFile->Close();  
 }
 //______________________________________________________________________________
-void NeutronGenerator::FinishEvent(){
-  
-  if(fRunMode == kMassRapidity || fRunMode == kFlatMultiplicity || fRunMode == k1n1n)fEventTree ->Fill();
-  else{//(fRunMode == kStarlightAscii){
-    for(Int_t i=0; i< fParticles->GetEntriesFast(); i++)fOutputStarlightAscii<<"TRACK: "<<i+11<<" "<<
-    							       ((TParticle*)fParticles->At(i))->Px()<<" "<<
-    							       ((TParticle*)fParticles->At(i))->Py()<<" "<<
-							       ((TParticle*)fParticles->At(i))->Pz()<<" "<<iEvent+1<<" 0 0 "<<"2112"<<endl;
-    fOutputStarlightAscii<<lineString.Data()<<endl;
-    }
-  fParticles->Clear("C");
-}
-//______________________________________________________________________________
-void NeutronGenerator::CreateNeutrons(const Int_t nNeutronsBeam1, const Int_t nNeutronsBeam2)
+void NeutronGenerator::CreateNeutrons(const Int_t nNeutronsBeam1, const Int_t nNeutronsBeam2) // need modification
 {
   hNeutronMultiplicity->Fill(nNeutronsBeam1,nNeutronsBeam2);
-  Double_t energyKin = 0;
-  Double_t mom = 0,phi = 0, theta = 0;
+  Double_t energyKin = 0,mom = 0,phi = 0, theta = 0;
+
   TLorentzVector vec;
   Int_t nNeutrons[2] = {nNeutronsBeam1,nNeutronsBeam2};
   Double_t energyPhoton = -1;
   Int_t energyBin = -1;
   
   Int_t nGenerated=0;
+
   for(Int_t side = 0; side<=1; side++){
   
     if(nNeutrons[side] == 0)continue;
+
     if(nNeutrons[side] <= 10){
-      energyPhoton = hSection_Nn[nNeutrons[side]-1].GetRandom();
+      energyPhoton = hSection_Nn[nNeutrons[side]-1].GetRandom(); //hSection_Nn what is this??
       energyBin = hENDF_2D->GetXaxis()->FindBin(energyPhoton);
       if(energyPhoton>140) energyBin--;
       hENDF_1D = hENDF_2D->ProjectionY("hENDF_1D",energyBin,energyBin);
       hEnergyBin->Fill(energyBin);
       hEnergyForNeutronMulti->Fill(energyPhoton);
       }
+
     if(nNeutrons[side] > 10)hENDF_1D = hENDF_2D->ProjectionY("hENDF_1D",hENDF_2D->GetNbinsX(),hENDF_2D->GetNbinsX()); 
        
     for(Int_t i = 0; i<nNeutrons[side]; i++){
       energyKin = hENDF_1D->GetRandom();
       mom = TMath::Sqrt((energyKin + neutron_M)*(energyKin + neutron_M) - neutron_M*neutron_M);
-      /**
-      * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CONCERN !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      */
-      phi = 2*pi*gRandom->Rndm();//         CONCERN !!
+ 
+      phi = 2*pi*gRandom->Rndm();
       theta = pi*gRandom->Rndm();
-      /**
-      *!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CONCERN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      */
-
+  
       hKinEnergyGen->Fill(energyKin);
+
       vec.SetXYZM(mom*TMath::Sin(theta)*TMath::Cos(phi),mom*TMath::Sin(theta)*TMath::Sin(phi), mom*TMath::Cos(theta), neutron_M);
       hEnergyGen->Fill(vec.Energy());
       hMomGen->Fill(vec.P());
@@ -325,7 +247,7 @@ void NeutronGenerator::CreateNeutrons(const Int_t nNeutronsBeam1, const Int_t nN
 
       //TParticle units are GeV, up to now we were in MeV
       TParticle *part = (TParticle*) fParticles->ConstructedAt(nGenerated++);
-      part->SetMomentum(vec.Px()*0.001, vec.Py()*0.001, vec.Pz()*0.001, vec.Energy()*0.001);
+      part->SetMomentum(vec.Px()*0.001, vec.Py()*0.001, vec.Pz()*0.001, vec.Energy()*0.001); //GeV convesion
       part->SetPdgCode(2112);
       part->SetStatusCode(1);
       part->SetProductionVertex(0,0,0,0);
@@ -339,6 +261,9 @@ void NeutronGenerator::CreateNeutrons(const Int_t nNeutronsBeam1, const Int_t nN
       }
     }
 }
+//______________________________________________________________________________
+//
+// Most Important Part of NOON DOn't edit or change
 //______________________________________________________________________________
 void NeutronGenerator::BuildPhotonFluxModulationTables()
 {
@@ -514,12 +439,12 @@ Double_t *NeutronGenerator::NucleusBreakupProbability(const Double_t impactPar)
   Double_t integralPoisson = 0;
   Int_t maxExcitation = 5;
   if(impactPar<22) maxExcitation = 6;
-  /*/
-  for(Int_t i=0; integralPoisson<0.999; i++){
-    integralPoisson += TMath::PoissonI(i,prob_Xn);
-    maxExcitation = i;
-    }
-/*/
+  
+  // for(Int_t i=0; integralPoisson<0.999; i++){
+  //   integralPoisson += TMath::PoissonI(i,prob_Xn);
+  //   maxExcitation = i;
+  //   }
+
   Double_t norm_Xn = 0.0;  
   for(Int_t i=1; i<maxNeutrons; i++){ 
     prob_Breakup[i] += prob_Nn[i-1];
@@ -567,6 +492,7 @@ Double_t NeutronGenerator::GetBR(const Double_t energyPhoton, const Int_t nNeutr
   return hBranchingRatioMap->GetBinContent(hBranchingRatioMap->FindBin(energyPhoton,nNeutrons));
 } 
 //______________________________________________________________________________
+//
 void NeutronGenerator::Initialize()
 {
   //Data for Xn in 25GeV-103GeV from Pb Nucl. Phys. A367, 237 (1981) 		
@@ -1186,3 +1112,83 @@ void NeutronGenerator::FromVectorToMatrix(Int_t index, Int_t &row, Int_t &col)
   row--; 
   col = maxNeutrons - keyafter + index; 
 }
+//____________________________________________________________________________
+// MOST IMPORTANT LINES OF CODES DON'T EDIT OR CHANGE
+//______________________________________________________________________________
+
+// comment it out 
+
+void NeutronGenerator::runSartreNooon(const Double_t photonK, const Int_t index)
+{
+
+  //generate event
+  Int_t nNeutronsBeam1 = 0, nNeutronsBeam2 = 0;
+  
+  for(Int_t i = 0; i < maxNeutrons; i++)
+  { 
+    for(Int_t j = i; j < maxNeutrons; j++)
+    {
+      if(i != j)hEventBreakupMap->SetBinContent(FromMatrixToVector(i,j)+1,2.0*GetBreakupProbability(photonK,i,j));
+	    if(i == j)hEventBreakupMap->SetBinContent(FromMatrixToVector(i,j)+1,GetBreakupProbability(photonK,i,j));
+	  }
+  }
+      
+  Int_t randBin = hEventBreakupMap->FindBin(hEventBreakupMap->GetRandom())-1; // why ??
+  FromVectorToMatrix(randBin,nNeutronsBeam1,nNeutronsBeam2);//the function modifies the pointers
+    
+  if(nNeutronsBeam1 != nNeutronsBeam2 && gRandom->Rndm()<0.5)createSartreNeutrons(nNeutronsBeam2,nNeutronsBeam1);
+  else createSartreNeutrons(nNeutronsBeam1,nNeutronsBeam2);
+
+}
+
+void NeutronGenerator::createSartreNeutrons(const Int_t nBeam1, const Int_t nBeam2)
+{
+  hNeutronMultiplicity->Fill(nBeam1,nBeam2);
+  Double_t energyKin = 0,mom = 0,phi = 0, theta = 0;
+
+  TLorentzVector vec;
+  Int_t nNeutrons[2] = {nBeam1,nBeam2};
+  Double_t energyPhoton = -1;
+  Int_t energyBin = -1;
+  
+  Int_t nGenerated=0;
+
+  for(Int_t side = 0; side<=1; side++){
+  
+    if(nNeutrons[side] == 0)continue;
+
+    if(nNeutrons[side] <= 10){
+      energyPhoton = hSection_Nn[nNeutrons[side]-1].GetRandom(); //hSection_Nn what is this??
+      energyBin = hENDF_2D->GetXaxis()->FindBin(energyPhoton);
+      if(energyPhoton>140) energyBin--;
+      hENDF_1D = hENDF_2D->ProjectionY("hENDF_1D",energyBin,energyBin);
+      hEnergyBin->Fill(energyBin);
+      hEnergyForNeutronMulti->Fill(energyPhoton);
+      }
+
+    if(nNeutrons[side] > 10)hENDF_1D = hENDF_2D->ProjectionY("hENDF_1D",hENDF_2D->GetNbinsX(),hENDF_2D->GetNbinsX()); 
+       
+    for(Int_t i = 0; i<nNeutrons[side]; i++){
+      energyKin = hENDF_1D->GetRandom();
+      mom = TMath::Sqrt((energyKin + neutron_M)*(energyKin + neutron_M) - neutron_M*neutron_M);
+ 
+      phi = 2*pi*gRandom->Rndm();
+      theta = pi*gRandom->Rndm();
+  
+      hKinEnergyGen->Fill(energyKin);
+
+      vec.SetXYZM(mom*TMath::Sin(theta)*TMath::Cos(phi),mom*TMath::Sin(theta)*TMath::Sin(phi), mom*TMath::Cos(theta), neutron_M);
+      std::cout<<"Event "<<i<<" neutron beam 1 " <<n1<< "k1,k2,k3,E"<<k1<<k2<<k3<<E1 <<n2<< "k1,k2,k3,E"<<k4<<k5<<k6<<E2;
+      
+      vec.Boost(0,0,TMath::Power(-1,side)*TMath::Sqrt(1.0-1.0/beamGamma/beamGamma));
+      
+
+      //TParticle units are GeV, up to now we were in MeV
+      TParticle *part = (TParticle*) fParticles->ConstructedAt(nGenerated++);
+      part->SetMomentum(vec.Px()*0.001, vec.Py()*0.001, vec.Pz()*0.001, vec.Energy()*0.001); //GeV convesion
+
+      }
+    }
+}
+
+//__________________________________________________________________________________

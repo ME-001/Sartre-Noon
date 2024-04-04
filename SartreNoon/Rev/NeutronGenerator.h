@@ -46,6 +46,9 @@ public:
   
   Double_t GetBreakupProbability(const Double_t photonK, const Int_t nNeutronsBeam1, const Int_t nNeutronsBeam2);
   Double_t GetTotalFlux(const Double_t photonK);
+
+  void runSartreNoon(const Double_t photonk, const Int_t eventindex);
+  void createSartreNeutrons(const Int_t nBeam1, const Int_t nBeam2);
   
 protected:
 

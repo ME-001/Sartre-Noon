@@ -117,20 +117,25 @@ void run()
     TRandom rm;
 
     std::vector<double> dp;
-    std:vector<double> phk;
+    std::vector<double> phk;
 
-    for(Int_t i = 0; i<nE; ++i)
+    for(Int_t i = 0; i<10; ++i)
     {  
         Double_t y = rpHist->GetRandom();
         
         Double_t k = 0.5*mv*TMath::Exp(TMath::Abs(y));
 
-        gen->GenerateEvent(k);
-        gen->FinishEvent();
+        gen->GenerateEvent(k); //number of neutrons and then their kinematics
+
+        //desired: those kinematics idaelly in lab frame (boosted)
+
+        //plot or print
+
+        gen->runSartreNoon(k,i);
 
     }
 
-    gen->FinishProduction();
+    // gen->FinishProduction();
 
     // file2->Close();
     // delete file2;
