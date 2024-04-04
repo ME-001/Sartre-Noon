@@ -1118,8 +1118,13 @@ void NeutronGenerator::FromVectorToMatrix(Int_t index, Int_t &row, Int_t &col)
 
 // comment it out 
 
-void NeutronGenerator::runSartreNooon(const Double_t photonK, const Int_t index)
+void NeutronGenerator::runSartreNoon(const Double_t photonK, const Int_t index)
 {
+
+  std::ofstream outfile("output.txt", std::ios_base::app);
+  // Redirect output to the file
+  std::streambuf *coutbuf = std::cout.rdbuf(); // Save old buf
+  std::cout.rdbuf(outfile.rdbuf()); // Redirect std::cout to output.txt
 
   //generate event
   Int_t nNeutronsBeam1 = 0, nNeutronsBeam2 = 0;
@@ -1135,14 +1140,25 @@ void NeutronGenerator::runSartreNooon(const Double_t photonK, const Int_t index)
       
   Int_t randBin = hEventBreakupMap->FindBin(hEventBreakupMap->GetRandom())-1; // why ??
   FromVectorToMatrix(randBin,nNeutronsBeam1,nNeutronsBeam2);//the function modifies the pointers
+
+  std::cout<<"Event number: "<<index<<std::endl; 
     
   if(nNeutronsBeam1 != nNeutronsBeam2 && gRandom->Rndm()<0.5)createSartreNeutrons(nNeutronsBeam2,nNeutronsBeam1);
   else createSartreNeutrons(nNeutronsBeam1,nNeutronsBeam2);
 
+  // Restore the original output stream
+  std::cout.rdbuf(coutbuf);
 }
 
 void NeutronGenerator::createSartreNeutrons(const Int_t nBeam1, const Int_t nBeam2)
 {
+
+  std::ofstream outfile("output.txt", std::ios_base::app);
+
+  // Redirect output to the file
+  std::streambuf *coutbuf = std::cout.rdbuf(); // Save old buf
+  std::cout.rdbuf(outfile.rdbuf()); // Redirect std::cout to output.txt
+
   hNeutronMultiplicity->Fill(nBeam1,nBeam2);
   Double_t energyKin = 0,mom = 0,phi = 0, theta = 0;
 
@@ -1167,7 +1183,11 @@ void NeutronGenerator::createSartreNeutrons(const Int_t nBeam1, const Int_t nBea
       }
 
     if(nNeutrons[side] > 10)hENDF_1D = hENDF_2D->ProjectionY("hENDF_1D",hENDF_2D->GetNbinsX(),hENDF_2D->GetNbinsX()); 
-       
+
+     std::cout<<"beamside "<<side<<" Neutron number "<<nBeam1<<std::endl;
+
+    std::cout.rdbuf(coutbuf);
+
     for(Int_t i = 0; i<nNeutrons[side]; i++){
       energyKin = hENDF_1D->GetRandom();
       mom = TMath::Sqrt((energyKin + neutron_M)*(energyKin + neutron_M) - neutron_M*neutron_M);
@@ -1178,7 +1198,7 @@ void NeutronGenerator::createSartreNeutrons(const Int_t nBeam1, const Int_t nBea
       hKinEnergyGen->Fill(energyKin);
 
       vec.SetXYZM(mom*TMath::Sin(theta)*TMath::Cos(phi),mom*TMath::Sin(theta)*TMath::Sin(phi), mom*TMath::Cos(theta), neutron_M);
-      std::cout<<"Event "<<i<<" neutron beam 1 " <<n1<< "k1,k2,k3,E"<<k1<<k2<<k3<<E1 <<n2<< "k1,k2,k3,E"<<k4<<k5<<k6<<E2;
+      // std::cout<<"Event "<<i<<" neutron beam 1 " <<n1<< "k1,k2,k3,E"<<k1<<k2<<k3<<E1 <<n2<< "k1,k2,k3,E"<<k4<<k5<<k6<<E2;
       
       vec.Boost(0,0,TMath::Power(-1,side)*TMath::Sqrt(1.0-1.0/beamGamma/beamGamma));
       
@@ -1186,8 +1206,18 @@ void NeutronGenerator::createSartreNeutrons(const Int_t nBeam1, const Int_t nBea
       //TParticle units are GeV, up to now we were in MeV
       TParticle *part = (TParticle*) fParticles->ConstructedAt(nGenerated++);
       part->SetMomentum(vec.Px()*0.001, vec.Py()*0.001, vec.Pz()*0.001, vec.Energy()*0.001); //GeV convesion
+      
+      std::cout<<"Neutron kinematics "<<i<<" M,px,py,pz "<<neutron_M<<" "<<mom*TMath::Sin(theta)*TMath::Cos(phi)<<" "<<mom*TMath::Sin(theta)*TMath::Sin(phi)<<" "<<mom*TMath::Cos(theta)<<std::endl;
+
+      // Restore the original output stream
+      std::cout.rdbuf(coutbuf);
+
+      // Close the file
+      outfile.close();
 
       }
+
+
     }
 }
 

@@ -121,6 +121,9 @@ void run()
 
     for(Int_t i = 0; i<10; ++i)
     {  
+
+        std::ofstream outfile("output.txt", std::ios_base::app);
+
         Double_t y = rpHist->GetRandom();
         
         Double_t k = 0.5*mv*TMath::Exp(TMath::Abs(y));
