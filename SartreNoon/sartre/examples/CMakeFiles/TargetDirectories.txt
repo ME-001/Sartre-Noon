@@ -1,0 +1,10 @@
+/home/bhakta/sartre/examples/CMakeFiles/createBSatBDependenceTable.dir
+/home/bhakta/sartre/examples/CMakeFiles/heraCompare.dir
+/home/bhakta/sartre/examples/CMakeFiles/sartreMain.dir
+/home/bhakta/sartre/examples/CMakeFiles/sartreTest.dir
+/home/bhakta/sartre/examples/CMakeFiles/tableGeneratorMain.dir
+/home/bhakta/sartre/examples/CMakeFiles/tableGeneratorUPCMain.dir
+/home/bhakta/sartre/examples/CMakeFiles/lambdaGeneratorMain.dir
+/home/bhakta/sartre/examples/CMakeFiles/convergenceTest.dir
+/home/bhakta/sartre/examples/CMakeFiles/edit_cache.dir
+/home/bhakta/sartre/examples/CMakeFiles/rebuild_cache.dir
