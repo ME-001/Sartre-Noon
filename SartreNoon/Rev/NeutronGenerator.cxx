@@ -146,8 +146,8 @@ void NeutronGenerator::GenerateEvent(const Double_t photonK)
 	  }
   }
       
-  Int_t randBin = hEventBreakupMap->FindBin(hEventBreakupMap->GetRandom())-1; // why ??
-  FromVectorToMatrix(randBin,nNeutronsBeam1,nNeutronsBeam2);//the function modifies the pointers
+  Int_t randBin = hEventBreakupMap->FindBin(hEventBreakupMap->GetRandom())-1; 
+  FromVectorToMatrix(randBin,nNeutronsBeam1,nNeutronsBeam2); //the function modifies the pointers
     
   if(nNeutronsBeam1 != nNeutronsBeam2 && gRandom->Rndm()<0.5)CreateNeutrons(nNeutronsBeam2,nNeutronsBeam1);
   else CreateNeutrons(nNeutronsBeam1,nNeutronsBeam2);
@@ -279,7 +279,7 @@ void NeutronGenerator::BuildPhotonFluxModulationTables()
     for(Int_t j = i; j < maxNeutrons; j++){
       gPhotonFluxTable[FromMatrixToVector(i,j)+1].SetName(TString::Format("gPhotonFluxTable%d%d",i,j));
       }
-    }
+  }
   cout<<"Building photon flux modulation tables"<<endl;  
   for(Double_t energy_value = energy_min; energy_value<=energy_max; energy_value *= energy_delta){
     Double_t* flux = PhotonFlux(energy_value);
@@ -287,7 +287,7 @@ void NeutronGenerator::BuildPhotonFluxModulationTables()
     for(Int_t i = 0; i < maxNeutrons; i++){
       for(Int_t j = i; j < maxNeutrons; j++){
         gPhotonFluxTable[FromMatrixToVector(i,j)+1].SetPoint(iStep,energy_value,energy_value*flux[FromMatrixToVector(i,j)+1]);
-	}
+	      }
       }
     gPhotonFluxTable[nFluxes-1].SetPoint(iStep,energy_value,energy_value*flux[nFluxes-1]);
     iStep++;
@@ -295,7 +295,7 @@ void NeutronGenerator::BuildPhotonFluxModulationTables()
       if(iStep > 10){ printf("\033[1A"); printf("\033[K");}   
        cout<<iStep<<"%"<<endl;
        }
-   }
+  }
 }
 //______________________________________________________________________________
 Double_t *NeutronGenerator::PhotonFlux(const Double_t energyPhoton)
@@ -1118,7 +1118,7 @@ void NeutronGenerator::FromVectorToMatrix(Int_t index, Int_t &row, Int_t &col)
 
 // comment it out 
 
-void NeutronGenerator::runSartreNoon(const Double_t photonK, const Int_t index)
+void NeutronGenerator::runSartreNoon(const Double_t photonK, const Int_t index) // Add rapidity,beam gamma, event 
 {
 
   std::ofstream outfile("output.txt", std::ios_base::app);
