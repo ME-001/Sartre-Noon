@@ -38,7 +38,44 @@
 #include "TClonesArray.h"
 
 #define PR(x) cout << #x << " = " << (x) << endl;
+//_________________________________________________
+//_______________________________________________________
+#ifdef __CLING__
+#include <iostream>
+#include <fstream>
+#include <string>
 
+#include "TROOT.h"
+#include "TH1.h"
+#include "TH1D.h"
+#include "TH2D.h"
+#include "TString.h"
+#include "TGraph.h"
+#include "TCanvas.h"
+#include "TLegend.h"
+#include "NeutronGenerator.cxx+g"
+
+#include <vector>
+#include "TFile.h"
+#include "TTree.h"
+#include "TLorentzVector.h"
+#include <cmath>
+
+#include "TFile.h"
+#include "TTree.h"
+#include "TLorentzVector.h"
+#include <cmath>
+#include "TMath.h"
+#include "TDatabasePDG.h"
+
+#include "NeutronGenerator.h"
+#endif
+
+
+
+
+//
+//_________________________________________________________________
 using namespace std;
 
 struct rootSartreEvent {
@@ -59,6 +96,21 @@ void randomlyReverseBeams(Event* );  // for UPC mode
 
 int main(int argc, char *argv[])
 {
+
+    #if defined(__CLINT__)
+        gROOT->LoadMacro("NeutronGenerator.cxx+g");
+    #endif
+    NeutronGenerator *gen = new NeutronGenerator();
+
+    gen->SetStoreQA();
+    gen->SetStoreGeneratorFunctions();
+    gen->SetHadronicInteractionModel(NeutronGenerator::kGlauber);
+    gen->Initialize();
+    gen->SetRunMode(NeutronGenerator::kInterface);
+    gen->ReadENDF(kTRUE);
+    gen->LoadENDF("hENDF.root");
+    gen->Setup();
+
     //
     //  Check command line arguments
     //
@@ -117,10 +169,15 @@ int main(int argc, char *argv[])
     TLorentzVector *gamma = new TLorentzVector;
     TLorentzVector *vmDaughter1 = new TLorentzVector;
     TLorentzVector *vmDaughter2 = new TLorentzVector;
+    TLorentzVector *neutrons1 = new TLorentzVector;
+    TLorentzVector *neutrons2 = new TLorentzVector;
     
     TClonesArray protons("TLorentzVector");
     TClonesArray neutrons("TLorentzVector");
     TClonesArray remnants("TLorentzVector");
+    // TClonesArray beam1("TClonesArray");
+    // TClonesArray beam2("TClonesArray");
+    
     
     TTree tree("tree","sartre");
     tree.Branch("event", &myRootSartreEvent.t,
@@ -133,7 +190,23 @@ int main(int argc, char *argv[])
     tree.Branch("gamma","TLorentzVector", &gamma, 32000, 0);
     tree.Branch("vmDaughter1", "TLorentzVector", &vmDaughter1, 32000, 0);
     tree.Branch("vmDaughter2", "TLorentzVector", &vmDaughter2, 32000, 0);
+    //_________________________________________________________________________________________
+    // Modification section  Start
+    //__________________________________________________________________________________
+    /**
+     * Creating two more branches
+     * They will store array of particles data
+    */
     
+    tree->Branch("n1","TLorentzVector",&neutrons1,32000,0);
+    tree->Branch("n2","TLorentzVector",&neutrons2,32000,0); 
+    // tree.Branch("n1") // n1 must have 
+    // tree.Branch("n2")
+    // tree.Branch("neutronIndices") (1)
+
+    //________________________________________________________________________________________________________________________
+    //  Modification section END
+    //__________________________________________________________________________________________________________________
     if(settings->enableNuclearBreakup()){
         tree.Branch("protons", &protons);
         tree.Branch("neutrons", &neutrons);
@@ -214,6 +287,27 @@ int main(int argc, char *argv[])
         pOut    = &event->particles[6].p;
         vm      = &event->particles[4].p;
         gamma   = &event->particles[3].p;
+
+        Double_t y = vm->Rapidity();
+        Double_t Mv = 3.09;
+        Double_t k = 0.5*Mv*TMath::Exp(TMath::Abs(y));
+        cout<<"Check Before neutron Generation"<<endl;
+        
+        neutronArray EventNeutrons = gen->runSartreNoon(k);
+
+        for(Int_t side = 0; side <=1;side++)
+        {   
+            vector<TLorentzVector> Ni;
+            if(side == 0) Ni = EventNeutrons.n1Array;
+            else Ni = EventNeutrons.n2Array;
+            for(Int_t n = 0; n<sizeof(Ni); n++)
+            {   
+                cout<<"vec Parameters"<<endl;
+                Ni[n].Print();
+            }
+        }
+
+
         
         //If the event is incoherent, and nuclear breakup is enabled, fill the remnants to the tree
         if(settings->enableNuclearBreakup() and event->diffractiveMode == incoherent){
@@ -256,9 +350,10 @@ int main(int argc, char *argv[])
         }
         
         tree.Fill();
+        delete EventNeutrons;
     }
     cout << "All events processed\n" << endl;
-    
+    cout<<"Chekc noon"<<endl;
     //
     //  That's it, finish up
     //

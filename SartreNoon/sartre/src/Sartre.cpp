@@ -949,7 +949,8 @@ Event* Sartre::generateEvent()
         mCurrentEvent->beta = mCurrentEvent->x/mCurrentEvent->xpom;
     }
     
-    return mCurrentEvent;    
+    return mCurrentEvent;   
+ 
 }    
     
 double Sartre::totalCrossSection()    
