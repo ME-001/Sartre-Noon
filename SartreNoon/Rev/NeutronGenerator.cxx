@@ -40,7 +40,7 @@ NeutronGenerator::NeutronGenerator()
   , nFluxes(2+(maxNeutrons)*(maxNeutrons+1)/2)
   , nucleus_Z(82)
   , nucleus_A(208)
-  , beamGamma(2942) //needs to be changed 
+  , beamGamma(7247) //needs to be changed 
   , gammaTarget(2.0*beamGamma*beamGamma-1.0)
   , neutronSepThr(0.0)
   , saturationEnergy(1e6)
@@ -1119,7 +1119,7 @@ void NeutronGenerator::FromVectorToMatrix(Int_t index, Int_t &row, Int_t &col)
 
 // comment it out 
 
-neutronArray NeutronGenerator::runSartreNoon(const Double_t photonK) // Add rapidity,beam gamma, event 
+std::vector<Int_t> NeutronGenerator::runSartreNoon(const Double_t photonK) // Add rapidity,beam gamma, event 
 {
 
   // std::ofstream outfile("output.txt", std::ios_base::app);
@@ -1144,13 +1144,20 @@ neutronArray NeutronGenerator::runSartreNoon(const Double_t photonK) // Add rapi
   Int_t randBin = hEventBreakupMap->FindBin(hEventBreakupMap->GetRandom())-1; // why ??
   FromVectorToMatrix(randBin,nNeutronsBeam1,nNeutronsBeam2);//the function modifies the pointers
 
-  std::cout<<"Event number: "<<index<<std::endl; 
+  // std::cout<<"Event number: "<<index<<std::endl; 
     
-  if(nNeutronsBeam1 != nNeutronsBeam2 && gRandom->Rndm()<0.5) return createSartreNeutrons(nNeutronsBeam2,nNeutronsBeam1);
-  else return createSartreNeutrons(nNeutronsBeam1,nNeutronsBeam2);
+  // if(nNeutronsBeam1 != nNeutronsBeam2 && gRandom->Rndm()<0.5) return createSartreNeutrons(nNeutronsBeam2,nNeutronsBeam1);
+  // else return createSartreNeutrons(nNeutronsBeam1,nNeutronsBeam2);
 
   // Restore the original output stream
   // std::cout.rdbuf(coutbuf);
+
+  std::vector<Int_t> result;
+
+  result.push_back(nNeutronsBeam1);
+  result.push_back(nNeutronsBeam2);
+
+  return result;
 
 }
 

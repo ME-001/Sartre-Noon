@@ -56,7 +56,7 @@ public:
 
 
 
-  neutronArray runSartreNoon(const Double_t photonk);
+  std::vector<Int_t> runSartreNoon(const Double_t photonk);
   neutronArray createSartreNeutrons(const Int_t nBeam1, const Int_t nBeam2);
   
 protected:
