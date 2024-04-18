@@ -13,7 +13,7 @@
 //  merchantability or fitness for a particular purpose. See the 
 //  GNU General Public License for more details. 
 //  You should have received a copy of the GNU General Public License
-//  along with this program.  If not, see <httTBrowp://www.gnu.org/licenses/>.
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 //  Author: Thomas Ullrich 
 //  Last update: 
@@ -32,8 +32,8 @@
 #  Define beams 
 #
 # LHC UPC PbPb mode sqrt(s)=2.76 TeV
-eBeamEnergy =  6800
-hBeamEnergy =  6800
+eBeamEnergy =  1380
+hBeamEnergy =  1380
 A           =  208
 
 # Examples:
@@ -53,7 +53,7 @@ xpomMax = 0
 # 
 #  Number of events and printout frequency 
 # 
-numberOfEvents =  100 #100k
+numberOfEvents =  10000
 timesToShow    =  20
  
 # 
@@ -66,13 +66,13 @@ verboseLevel  =  2
 # 
 #  Rootfile  
 # 
-rootfile =  example_Pb.root
+rootfile =  example.root
 
 #
 #  Dipole model
 #
 dipoleModel =  bSat
-dipoleModelParameterSet = STU
+dipoleModelParameterSet = HMPZ
 
 # 
 #  Model parameters 
@@ -96,8 +96,8 @@ userInt = 11
 # 
 #  Corrections 
 # 
-correctForRealAmplitude =  false
-correctSkewedness       =  false
+correctForRealAmplitude =  true
+correctSkewedness       =  true
 maxLambdaUsedInCorrections = 0.1
  
 # 
@@ -121,4 +121,4 @@ seed =  2011987
 #
 #  Expert flags
 #
-applyPhotonFlux = false
+# applyPhotonFlux = true

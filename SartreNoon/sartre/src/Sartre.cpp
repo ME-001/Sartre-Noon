@@ -43,6 +43,8 @@
 #include "TH2D.h"
 #include "TFile.h"
 
+
+
 using namespace std;    
     
 #define PR(x) cout << #x << " = " << (x) << endl;    
@@ -366,6 +368,7 @@ bool Sartre::init(const char* runcard)
         }
         if (mSettings->Q2min() < mSettings->Q2max()) {  // Q2
             
+
             if (mSettings->Q2min() < mLowerLimit[1]) {
                 cout << "Warning, requested lower limit of Q2 (" << mSettings->Q2min() << ") "    
                 << "is smaller than limit given by lookup tables and/or kinematic range (" << mLowerLimit[1] << "). ";
@@ -1104,3 +1107,47 @@ ostream& operator<<(ostream& os, const TLorentzVector& v)
         
     return os;    
 }    
+
+#include "NeutronGenerator.h"
+#include "TLorentzVector.h"
+#include "TGraph.h"
+#ifdef __CLING__
+#include "NeutronGenerator.cxx+g"
+#endif
+#include "NeutronGenerator.cxx"
+
+Event* Sartre::GenerateNeutronEvent(Event *event, TLorentzVector vm)
+{   
+    #if defined(__CLINT__)
+        gROOT->LoadMacro("NeutronGenerator.cxx+g");
+    #endif
+
+    NeutronGenerator *gen = new NeutronGenerator();
+
+    gen->SetStoreQA();
+    gen->SetStoreGeneratorFunctions();
+    gen->SetHadronicInteractionModel(NeutronGenerator::kGlauber);
+    gen->Initialize();
+    gen->SetRunMode(NeutronGenerator::kInterface);
+    gen->ReadENDF(kTRUE);
+    gen->LoadENDF("hENDF.root");
+    gen->Setup();
+
+    Event *et;
+    double y = vm.Rapidity();
+    double Mv = 3.09;
+    double  k = 0.5*Mv*TMath::Exp(TMath::Abs(y));
+
+    vector<int> numberOfNeutrons = gen->runSartreNoon(k);
+
+    
+    event->idx.push_back(numberOfNeutrons[0]);
+    event->idx.push_back(numberOfNeutrons[1]);
+    event->idx.push_back(7);
+    event->idx.push_back(8+numberOfNeutrons[0]+numberOfNeutrons[1]);
+
+    if(numberOfNeutrons[0] != numberOfNeutrons[1] && gRandom->Rndm()<0.5) et = gen->createSartreNeutrons(numberOfNeutrons[0],numberOfNeutrons[1],event);
+    else et = gen->createSartreNeutrons(numberOfNeutrons[0],numberOfNeutrons[1],event);
+
+    return et;
+}

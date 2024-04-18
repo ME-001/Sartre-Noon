@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/usr/local/sartre/include
+CXX_INCLUDES = -I/home/bhakta/sartre/sartreinstall/sartre/include
 
 CXX_FLAGS =  -O -std=c++17 -W -Wall -Wextra -pedantic -Wno-long-long -std=c++17
 

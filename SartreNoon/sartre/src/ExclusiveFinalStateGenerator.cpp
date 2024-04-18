@@ -594,6 +594,11 @@ bool ExclusiveFinalStateGenerator::generate(int id, double t, double xpom,
     event->particles[pomeron].daughters.push_back(hOut);    
     event->particles[hPos].daughters.push_back(hOut);    
 
+    // Add new loop for the neutrons
+    /**
+     * 
+    */
+
     //fill event structure
     double y=mHadronBeam*theVirtualPhoton/(mHadronBeam*mElectronBeam);
     double W2=(theVirtualPhoton+mHadronBeam).M2();

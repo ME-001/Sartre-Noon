@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/bhakta/Sartre-Noon/SartreNoon/sartre/examples
+CMAKE_SOURCE_DIR = /home/bhakta/sartre/examples
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/bhakta/Sartre-Noon/SartreNoon/sartre/examples
+CMAKE_BINARY_DIR = /home/bhakta/sartre/examples
 
 # Include any dependencies generated for this target.
 include CMakeFiles/heraCompare.dir/depend.make
@@ -72,16 +72,16 @@ include CMakeFiles/heraCompare.dir/flags.make
 CMakeFiles/heraCompare.dir/heraCompare.cpp.o: CMakeFiles/heraCompare.dir/flags.make
 CMakeFiles/heraCompare.dir/heraCompare.cpp.o: heraCompare.cpp
 CMakeFiles/heraCompare.dir/heraCompare.cpp.o: CMakeFiles/heraCompare.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/bhakta/Sartre-Noon/SartreNoon/sartre/examples/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/heraCompare.dir/heraCompare.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/heraCompare.dir/heraCompare.cpp.o -MF CMakeFiles/heraCompare.dir/heraCompare.cpp.o.d -o CMakeFiles/heraCompare.dir/heraCompare.cpp.o -c /home/bhakta/Sartre-Noon/SartreNoon/sartre/examples/heraCompare.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/bhakta/sartre/examples/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/heraCompare.dir/heraCompare.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/heraCompare.dir/heraCompare.cpp.o -MF CMakeFiles/heraCompare.dir/heraCompare.cpp.o.d -o CMakeFiles/heraCompare.dir/heraCompare.cpp.o -c /home/bhakta/sartre/examples/heraCompare.cpp
 
 CMakeFiles/heraCompare.dir/heraCompare.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/heraCompare.dir/heraCompare.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/bhakta/Sartre-Noon/SartreNoon/sartre/examples/heraCompare.cpp > CMakeFiles/heraCompare.dir/heraCompare.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/bhakta/sartre/examples/heraCompare.cpp > CMakeFiles/heraCompare.dir/heraCompare.cpp.i
 
 CMakeFiles/heraCompare.dir/heraCompare.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/heraCompare.dir/heraCompare.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/bhakta/Sartre-Noon/SartreNoon/sartre/examples/heraCompare.cpp -o CMakeFiles/heraCompare.dir/heraCompare.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/bhakta/sartre/examples/heraCompare.cpp -o CMakeFiles/heraCompare.dir/heraCompare.cpp.s
 
 # Object files for target heraCompare
 heraCompare_OBJECTS = \
@@ -92,21 +92,21 @@ heraCompare_EXTERNAL_OBJECTS =
 
 heraCompare: CMakeFiles/heraCompare.dir/heraCompare.cpp.o
 heraCompare: CMakeFiles/heraCompare.dir/build.make
-heraCompare: /usr/local/sartre/lib/libcuba.a
-heraCompare: /usr/local/sartre/lib/libgemini.a
-heraCompare: /usr/local/sartre/lib/libsartre.a
-heraCompare: /usr/local/sartre/lib/libcuba.a
-heraCompare: /usr/local/sartre/lib/libgemini.a
-heraCompare: /usr/local/sartre/lib/libsartre.a
+heraCompare: /home/bhakta/sartre/sartreinstall/sartre/lib/libcuba.a
+heraCompare: /home/bhakta/sartre/sartreinstall/sartre/lib/libgemini.a
+heraCompare: /home/bhakta/sartre/sartreinstall/sartre/lib/libsartre.a
+heraCompare: /home/bhakta/sartre/sartreinstall/sartre/lib/libcuba.a
+heraCompare: /home/bhakta/sartre/sartreinstall/sartre/lib/libgemini.a
+heraCompare: /home/bhakta/sartre/sartreinstall/sartre/lib/libsartre.a
 heraCompare: /usr/lib/x86_64-linux-gnu/libGL.so
 heraCompare: /usr/lib/x86_64-linux-gnu/libGLU.so
-heraCompare: /usr/local/sartre/lib/libcuba.a
-heraCompare: /usr/local/sartre/lib/libgemini.a
-heraCompare: /usr/local/sartre/lib/libsartre.a
+heraCompare: /home/bhakta/sartre/sartreinstall/sartre/lib/libcuba.a
+heraCompare: /home/bhakta/sartre/sartreinstall/sartre/lib/libgemini.a
+heraCompare: /home/bhakta/sartre/sartreinstall/sartre/lib/libsartre.a
 heraCompare: /usr/lib/x86_64-linux-gnu/libGL.so
 heraCompare: /usr/lib/x86_64-linux-gnu/libGLU.so
 heraCompare: CMakeFiles/heraCompare.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/bhakta/Sartre-Noon/SartreNoon/sartre/examples/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable heraCompare"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/bhakta/sartre/examples/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable heraCompare"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/heraCompare.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -118,6 +118,6 @@ CMakeFiles/heraCompare.dir/clean:
 .PHONY : CMakeFiles/heraCompare.dir/clean
 
 CMakeFiles/heraCompare.dir/depend:
-	cd /home/bhakta/Sartre-Noon/SartreNoon/sartre/examples && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/bhakta/Sartre-Noon/SartreNoon/sartre/examples /home/bhakta/Sartre-Noon/SartreNoon/sartre/examples /home/bhakta/Sartre-Noon/SartreNoon/sartre/examples /home/bhakta/Sartre-Noon/SartreNoon/sartre/examples /home/bhakta/Sartre-Noon/SartreNoon/sartre/examples/CMakeFiles/heraCompare.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/bhakta/sartre/examples && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/bhakta/sartre/examples /home/bhakta/sartre/examples /home/bhakta/sartre/examples /home/bhakta/sartre/examples /home/bhakta/sartre/examples/CMakeFiles/heraCompare.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/heraCompare.dir/depend
 

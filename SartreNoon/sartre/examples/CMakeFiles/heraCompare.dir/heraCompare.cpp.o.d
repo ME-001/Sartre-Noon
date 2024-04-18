@@ -1,6 +1,6 @@
 CMakeFiles/heraCompare.dir/heraCompare.cpp.o: \
- /home/bhakta/Sartre-Noon/SartreNoon/sartre/examples/heraCompare.cpp \
- /usr/include/stdc-predef.h /usr/include/c++/11/iostream \
+ /home/bhakta/sartre/examples/heraCompare.cpp /usr/include/stdc-predef.h \
+ /usr/include/c++/11/iostream \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -176,14 +176,16 @@ CMakeFiles/heraCompare.dir/heraCompare.cpp.o: \
  /usr/include/c++/11/bits/stl_uninitialized.h \
  /usr/include/c++/11/bits/stl_vector.h \
  /usr/include/c++/11/bits/stl_bvector.h \
- /usr/include/c++/11/bits/vector.tcc /usr/local/sartre/include/Sartre.h \
- /usr/local/sartre/include/Event.h /usr/local/include/TLorentzVector.h \
- /usr/local/include/TMath.h /usr/local/include/TMathBase.h \
- /usr/local/include/RtypesCore.h /usr/local/include/ROOT/RConfig.hxx \
- /usr/local/include/RVersion.h /usr/local/include/ROOT/RVersion.hxx \
- /usr/local/include/RConfigure.h /usr/local/include/DllImport.h \
- /usr/include/c++/11/cstddef /usr/include/c++/11/algorithm \
- /usr/include/c++/11/utility /usr/include/c++/11/bits/stl_relops.h \
+ /usr/include/c++/11/bits/vector.tcc \
+ /home/bhakta/sartre/sartreinstall/sartre/include/Sartre.h \
+ /home/bhakta/sartre/sartreinstall/sartre/include/Event.h \
+ /usr/local/include/TLorentzVector.h /usr/local/include/TMath.h \
+ /usr/local/include/TMathBase.h /usr/local/include/RtypesCore.h \
+ /usr/local/include/ROOT/RConfig.hxx /usr/local/include/RVersion.h \
+ /usr/local/include/ROOT/RVersion.hxx /usr/local/include/RConfigure.h \
+ /usr/local/include/DllImport.h /usr/include/c++/11/cstddef \
+ /usr/include/c++/11/algorithm /usr/include/c++/11/utility \
+ /usr/include/c++/11/bits/stl_relops.h \
  /usr/include/c++/11/bits/stl_algo.h \
  /usr/include/c++/11/bits/algorithmfwd.h \
  /usr/include/c++/11/bits/stl_heap.h \
@@ -261,10 +263,11 @@ CMakeFiles/heraCompare.dir/heraCompare.cpp.o: \
  /usr/include/c++/11/bits/sstream.tcc \
  /usr/local/include/Math/GenVector/CoordinateSystemTags.h \
  /usr/include/c++/11/cassert /usr/include/assert.h \
- /usr/local/sartre/include/Enumerations.h \
- /usr/local/sartre/include/EventGeneratorSettings.h \
- /usr/local/sartre/include/Settings.h /usr/include/c++/11/map \
- /usr/include/c++/11/bits/stl_tree.h /usr/include/c++/11/bits/stl_map.h \
+ /home/bhakta/sartre/sartreinstall/sartre/include/Enumerations.h \
+ /home/bhakta/sartre/sartreinstall/sartre/include/EventGeneratorSettings.h \
+ /home/bhakta/sartre/sartreinstall/sartre/include/Settings.h \
+ /usr/include/c++/11/map /usr/include/c++/11/bits/stl_tree.h \
+ /usr/include/c++/11/bits/stl_map.h \
  /usr/include/c++/11/bits/stl_multimap.h \
  /usr/local/include/TDatabasePDG.h /usr/local/include/TParticlePDG.h \
  /usr/local/include/TNamed.h /usr/local/include/TString.h \
@@ -287,23 +290,23 @@ CMakeFiles/heraCompare.dir/heraCompare.cpp.o: \
  /usr/include/c++/11/bits/stream_iterator.h \
  /usr/local/include/TParticleClassPDG.h /usr/local/include/TRandom3.h \
  /usr/local/include/TRandom.h /usr/local/include/Math/TRandomEngine.h \
- /usr/local/sartre/include/ExclusiveFinalStateGenerator.h \
- /usr/local/sartre/include/FinalStateGenerator.h \
- /usr/local/sartre/include/CrossSection.h \
- /usr/local/sartre/include/PhotonFlux.h /usr/local/include/TH1D.h \
- /usr/local/include/TH1.h /usr/local/include/TAxis.h \
- /usr/local/include/TAttAxis.h /usr/local/include/TArrayD.h \
- /usr/local/include/TArray.h /usr/local/include/TAttLine.h \
- /usr/local/include/TAttFill.h /usr/local/include/TAttMarker.h \
- /usr/local/include/TArrayC.h /usr/local/include/TArrayS.h \
- /usr/local/include/TArrayI.h /usr/local/include/TArrayF.h \
- /usr/local/include/Foption.h \
+ /home/bhakta/sartre/sartreinstall/sartre/include/ExclusiveFinalStateGenerator.h \
+ /home/bhakta/sartre/sartreinstall/sartre/include/FinalStateGenerator.h \
+ /home/bhakta/sartre/sartreinstall/sartre/include/CrossSection.h \
+ /home/bhakta/sartre/sartreinstall/sartre/include/PhotonFlux.h \
+ /usr/local/include/TH1D.h /usr/local/include/TH1.h \
+ /usr/local/include/TAxis.h /usr/local/include/TAttAxis.h \
+ /usr/local/include/TArrayD.h /usr/local/include/TArray.h \
+ /usr/local/include/TAttLine.h /usr/local/include/TAttFill.h \
+ /usr/local/include/TAttMarker.h /usr/local/include/TArrayC.h \
+ /usr/local/include/TArrayS.h /usr/local/include/TArrayI.h \
+ /usr/local/include/TArrayF.h /usr/local/include/Foption.h \
  /usr/local/include/ROOT/EExecutionPolicy.hxx \
  /usr/local/include/TFitResultPtr.h /usr/include/c++/11/cfloat \
- /usr/local/sartre/include/TableCollection.h \
- /usr/local/sartre/include/FrangibleNucleus.h \
- /usr/local/sartre/include/Nucleus.h \
- /usr/local/sartre/include/BreakupProduct.h \
+ /home/bhakta/sartre/sartreinstall/sartre/include/TableCollection.h \
+ /home/bhakta/sartre/sartreinstall/sartre/include/FrangibleNucleus.h \
+ /home/bhakta/sartre/sartreinstall/sartre/include/Nucleus.h \
+ /home/bhakta/sartre/sartreinstall/sartre/include/BreakupProduct.h \
  /usr/local/include/Math/Functor.h /usr/local/include/Math/IFunction.h \
  /usr/local/include/Math/IFunctionfwd.h /usr/local/include/TUnuran.h \
  /usr/local/include/TUnuranBaseDist.h /usr/local/include/TFile.h \
@@ -324,4 +327,5 @@ CMakeFiles/heraCompare.dir/heraCompare.cpp.o: \
  /usr/include/c++/11/bits/std_mutex.h \
  /usr/include/c++/11/bits/unique_lock.h /usr/include/c++/11/mutex \
  /usr/local/include/TGraphAsymmErrors.h /usr/local/include/TGraph.h \
- /usr/local/include/TGraphErrors.h /usr/local/sartre/include/Constants.h
+ /usr/local/include/TGraphErrors.h \
+ /home/bhakta/sartre/sartreinstall/sartre/include/Constants.h

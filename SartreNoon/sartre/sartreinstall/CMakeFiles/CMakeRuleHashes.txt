@@ -1,0 +1,10 @@
+# Hashes of file build rules.
+1bbef5947ce404d247af953bf690ea51 cuba/src/cuba-stamp/cuba-build
+6ac662e37a1f6e2d35b8995cff85dddb cuba/src/cuba-stamp/cuba-configure
+011c5c23632faf8eee4ef03f3a277d64 cuba/src/cuba-stamp/cuba-download
+4b2afd01107db6678b03adeacdc09e1f cuba/src/cuba-stamp/cuba-install
+0ab4961a56549cf7b401303aebc4952f cuba/src/cuba-stamp/cuba-mkdir
+6c5675ac45913a1cbd58ccafa5153994 cuba/src/cuba-stamp/cuba-patch
+2df061036d7c97e0e8f655791bda4882 cuba/src/cuba-stamp/cuba-update
+c7533560333b623dc9e4f7b5f7fe6a07 src/CMakeFiles/cuba
+ab8ae661c84055979afb28f885aa09ae src/CMakeFiles/cuba-complete
