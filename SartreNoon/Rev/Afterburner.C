@@ -84,9 +84,9 @@ void Afterburner()
     file->Close();
     delete file;
 
-    std::cout<<"0n0n number of events: "<<sizeof(onon)<<std::endl;
-    std::cout<<"0nXn number of events: "<<sizeof(onXn)<<std::endl;
-    std::cout<<"XnXn number of events: "<<sizeof(XnXn)<<std::endl;
+    std::cout<<"0n0n number of events: "<<onon.size()<<std::endl;
+    std::cout<<"0nXn number of events: "<<onXn.size()<<std::endl;
+    std::cout<<"XnXn number of events: "<<XnXn.size()<<std::endl;
 
     // Create histograms for each rapidity list
     TH1F *hist1 = new TH1F("hist1", "Rapidity Distribution 1", 100, -5.0, 5.0);
@@ -105,29 +105,29 @@ void Afterburner()
     }
 
     // Create histograms for cross-section distribution
-    TH1F *XS1 = new TH1F("XS1", "Xsection Distribution 1", 100, -5.0, 5.0);
-    TH1F *XS2 = new TH1F("XS2", "Xsection Distribution 2", 100, -5.0, 5.0);
-    TH1F *XS3 = new TH1F("XS3", "Xsection Distribution 3", 100, -5.0, 5.0);
+    TH1F *XS1 = new TH1F("XS1", "Xsection Distribution 1", 100, -3.5, 4.0);
+    TH1F *XS2 = new TH1F("XS2", "Xsection Distribution 2", 100, -3.5, 4.0);
+    TH1F *XS3 = new TH1F("XS3", "Xsection Distribution 3", 100, -3.5, 4.0);
 
     // Fill cross-section histograms
     for (double value : onon) {
         Int_t bin = hist1->FindBin(value);
-        Double_t crossSection = hist1->GetBinContent(bin) * 524/100;
+        Double_t crossSection = hist1->GetBinContent(bin) * 524/100000;
         XS1->Fill(value, crossSection);
     }
     for (double value : onXn) {
         Int_t bin = hist2->FindBin(value);
-        Double_t crossSection = hist2->GetBinContent(bin) * 524/100;
+        Double_t crossSection = hist2->GetBinContent(bin) * 524/100000;
         XS2->Fill(value, crossSection);
     }
     for (double value : XnXn) {
         Int_t bin = hist3->FindBin(value);
-        Double_t crossSection = hist3->GetBinContent(bin) * 524/100;
+        Double_t crossSection = hist3->GetBinContent(bin) * 524/100000;
         XS3->Fill(value, crossSection);
     }
 
     // Create a canvas to draw histograms
-    TCanvas *c1 = new TCanvas("c1", "Cross-section Plot", 800, 600);
+    TCanvas *c1 = new TCanvas("c1", "Cross-section Plot", 1200, 800);
 
     // Set histogram styles
     XS1->SetLineColor(kRed);
@@ -135,7 +135,7 @@ void Afterburner()
     XS3->SetLineColor(kGreen);
 
     // Draw histograms
-    XS1->Draw();
+    XS1->Draw("");
     XS2->Draw("same");
     XS3->Draw("same");
 
@@ -148,6 +148,7 @@ void Afterburner()
 
     // Draw canvas
     c1->Draw();
+    c1->SaveAs("Classes_of_cross_section.png");
 
 
 

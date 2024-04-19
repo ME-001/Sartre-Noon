@@ -68,7 +68,7 @@ public:
     //  First two are always beam particles.        
     //        
     vector<Particle> particles;
-    vector<int> idx;    
+    vector<int> idx;     // modified 
 
 public:        
     void list(ostream& = cout) const;        

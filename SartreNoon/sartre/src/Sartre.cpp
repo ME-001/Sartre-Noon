@@ -1116,38 +1116,38 @@ ostream& operator<<(ostream& os, const TLorentzVector& v)
 #endif
 #include "NeutronGenerator.cxx"
 
-Event* Sartre::GenerateNeutronEvent(Event *event, TLorentzVector vm)
-{   
-    #if defined(__CLINT__)
-        gROOT->LoadMacro("NeutronGenerator.cxx+g");
-    #endif
+// Event* Sartre::GenerateNeutronEvent(Event *event, TLorentzVector vm)
+// {   
+//     #if defined(__CLINT__)
+//         gROOT->LoadMacro("NeutronGenerator.cxx+g");
+//     #endif
 
-    NeutronGenerator *gen = new NeutronGenerator();
+//     NeutronGenerator *gen = new NeutronGenerator();
 
-    gen->SetStoreQA();
-    gen->SetStoreGeneratorFunctions();
-    gen->SetHadronicInteractionModel(NeutronGenerator::kGlauber);
-    gen->Initialize();
-    gen->SetRunMode(NeutronGenerator::kInterface);
-    gen->ReadENDF(kTRUE);
-    gen->LoadENDF("hENDF.root");
-    gen->Setup();
+//     gen->SetStoreQA();
+//     gen->SetStoreGeneratorFunctions();
+//     gen->SetHadronicInteractionModel(NeutronGenerator::kGlauber);
+//     gen->Initialize();
+//     gen->SetRunMode(NeutronGenerator::kInterface);
+//     gen->ReadENDF(kTRUE);
+//     gen->LoadENDF("hENDF.root");
+//     gen->Setup();
 
-    Event *et;
-    double y = vm.Rapidity();
-    double Mv = 3.09;
-    double  k = 0.5*Mv*TMath::Exp(TMath::Abs(y));
+//     Event *et;
+//     double y = vm.Rapidity();
+//     double Mv = 3.09;
+//     double  k = 0.5*Mv*TMath::Exp(TMath::Abs(y));
 
-    vector<int> numberOfNeutrons = gen->runSartreNoon(k);
+//     vector<int> numberOfNeutrons = gen->runSartreNoon(k);
 
     
-    event->idx.push_back(numberOfNeutrons[0]);
-    event->idx.push_back(numberOfNeutrons[1]);
-    event->idx.push_back(7);
-    event->idx.push_back(8+numberOfNeutrons[0]+numberOfNeutrons[1]);
+//     event->idx.push_back(numberOfNeutrons[0]);
+//     event->idx.push_back(numberOfNeutrons[1]);
+//     event->idx.push_back(7);
+//     event->idx.push_back(8+numberOfNeutrons[0]+numberOfNeutrons[1]);
 
-    if(numberOfNeutrons[0] != numberOfNeutrons[1] && gRandom->Rndm()<0.5) et = gen->createSartreNeutrons(numberOfNeutrons[0],numberOfNeutrons[1],event);
-    else et = gen->createSartreNeutrons(numberOfNeutrons[0],numberOfNeutrons[1],event);
+//     if(numberOfNeutrons[0] != numberOfNeutrons[1] && gRandom->Rndm()<0.5) et = gen->createSartreNeutrons(numberOfNeutrons[0],numberOfNeutrons[1],event);
+//     else et = gen->createSartreNeutrons(numberOfNeutrons[0],numberOfNeutrons[1],event);
 
-    return et;
-}
+//     return et;
+// }

@@ -294,16 +294,16 @@ int main(int argc, char *argv[])
         vm      = &event->particles[4].p;
         gamma   = &event->particles[3].p;
 
-        Event *e = sartre.GenerateNeutronEvent(event,vm);
+        // Event *e = sartre.GenerateNeutronEvent(event,vm);
         
-        for(int i = 0; i<2;i++)
-        {
-            for(int j = 0; j<e->idx[i];j++)
-            {   
-                if(i==0)neutrons1 = &e->particles[7+j].p;
-                else if(i==1)neutrons2 = &e->particles[7+e->idx[0]+j].p;         
-            }
-        }
+        // for(int i = 0; i<2;i++)
+        // {
+        //     for(int j = 0; j<e->idx[i];j++)
+        //     {   
+        //         if(i==0)neutrons1 = &e->particles[7+j].p;
+        //         else if(i==1)neutrons2 = &e->particles[7+e->idx[0]+j].p;         
+        //     }
+        // }
 
     
     //_______________________________________________________________________________________________________________________________
