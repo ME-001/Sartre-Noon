@@ -101,7 +101,7 @@ void Afterburner()
 
 
 
-    Double_t Mv = 3.09;
+    // Double_t Mv = 3.09;
 
     for(Long64_t index = 0; index < nE; index++)
     {
@@ -111,7 +111,7 @@ void Afterburner()
 
         Double_t eta= lv->Eta();
 
-        Double_t k = 0.5*Mv*TMath::Exp(TMath::Abs(y));
+        Double_t k = 0.5*lv->M()*TMath::Exp(TMath::Abs(y));
 
         std::vector<Int_t> nNumbers = gen->runSartreNoon(k);
 
@@ -154,17 +154,17 @@ void Afterburner()
     Double_t minRange = -6;
     Double_t maxRange = 6;
     // Create histograms for each rapidity list
-    TH1D *hist1 = new TH1D("hist1", "Rapidity Distribution 1", 1000, minRange,maxRange);
-    TH1D *hist2 = new TH1D("hist2", "Rapidity Distribution 2", 1000, minRange, maxRange);
-    TH1D *hist3 = new TH1D("hist3", "Rapidity Distribution 3", 1000, minRange,maxRange);
+    TH1D *hist1 = new TH1D("hist1", "vm Rapidity Distribution ", 1000, minRange,maxRange);
+    TH1D *hist2 = new TH1D("hist2", "vm Rapidity Distribution ", 1000, minRange, maxRange);
+    TH1D *hist3 = new TH1D("hist3", "vm Rapidity Distribution ", 1000, minRange,maxRange);
 
-    TH1D *Eta1 = new TH1D("Eta1", "PseudoRapidity Distribution 1", 1000,  -15,15);
-    TH1D *Eta2 = new TH1D("Eta2", "PseudoRapidity Distribution 2", 1000, -15,15);
-    TH1D *Eta3 = new TH1D("Eta3", "PseudoRapidity Distribution 3", 1000, -15,15);
+    TH1D *Eta1 = new TH1D("Eta1", "vm PseudoRapidity Distribution ", 1000,  -15,15);
+    TH1D *Eta2 = new TH1D("Eta2", "vm PseudoRapidity Distribution ", 1000, -15,15);
+    TH1D *Eta3 = new TH1D("Eta3", "vm PseudoRapidity Distribution ", 1000, -15,15);
 
-    TH1D *E1 = new TH1D("E1", "Energy 1", 1000, 0 ,15);
-    TH1D *E2 = new TH1D("E2", "Energy 2", 1000, 0, 15);
-    TH1D *E3 = new TH1D("E3", "Energy 3", 1000, 0, 15);
+    TH1D *E1 = new TH1D("E1", "vm Energy ", 1000, 0 ,300);
+    TH1D *E2 = new TH1D("E2", "vm Energy ", 1000, 0, 300);
+    TH1D *E3 = new TH1D("E3", "vm Energy ", 1000, 0, 300);
 
     for (Int_t i; i<onon.size();i++) {
         
@@ -194,10 +194,10 @@ void Afterburner()
     }
 
     // Create histograms for cross-section distribution
-    TH1D *XS1 = new TH1D("XS1", "Xsection Distribution 1", 1000, minRange, maxRange);
-    TH1D *XS2 = new TH1D("XS2", "Xsection Distribution 2", 1000, minRange,maxRange);
-    TH1D *XS3 = new TH1D("XS3", "Xsection Distribution 3", 1000, minRange,maxRange);
-    TH1D *XST = new TH1D("XST", "Total Cross section", 1000, minRange,maxRange);
+    TH1D *XS1 = new TH1D("XS1", "Cros-Section", 1000, minRange, maxRange);
+    TH1D *XS2 = new TH1D("XS2", "Cros-Section", 1000, minRange,maxRange);
+    TH1D *XS3 = new TH1D("XS3", "Cros-Section", 1000, minRange,maxRange);
+    TH1D *XST = new TH1D("XST", "Cros-Section", 1000, minRange,maxRange);
 
     for(Int_t entry = 0; entry<1000; entry++)
     {
@@ -275,8 +275,14 @@ void DrawNY( TH1D* NeutronY2, TH1D* NeutronY3)
     NeutronY3->GetXaxis()->SetTitle("Rapidity");
     NeutronY3->GetYaxis()->SetTitle("Counts");
     NeutronY3->Draw("SAME L");
+    TLegend *legend4 = new TLegend(0.7, 0.7, 0.9, 0.9);
+    // legend36->AddEntry(E1, "0n0n", "l");
+    legend4->AddEntry(NeutronY2, "0nXn", "l");
+    legend4->AddEntry(NeutronY3, "XnXn", "l");
+    // legend->AddEntry(EtaT, "Total", "l");
+    legend4->Draw();
 
-    c4->SaveAs("Neutron_Rapidity_Boosted.png");
+    c4->SaveAs("Neutron_Rapidity_Boosted_5.02.png");
 }
 
 void DrawNEta( TH1D* NeutronEta2, TH1D* NeutronEta3)
@@ -296,8 +302,14 @@ void DrawNEta( TH1D* NeutronEta2, TH1D* NeutronEta3)
     NeutronEta3->GetXaxis()->SetTitle("Pseudo Rapidity");
     NeutronEta3->GetYaxis()->SetTitle("Counts");
     NeutronEta3->Draw("SAME L");
+    TLegend *legend5 = new TLegend(0.7, 0.7, 0.9, 0.9);
+    // legend36->AddEntry(E1, "0n0n", "l");
+    legend5->AddEntry(NeutronEta2, "0nXn", "l");
+    legend5->AddEntry(NeutronEta3, "XnXn", "l");
+    // legend->AddEntry(EtaT, "Total", "l");
+    legend5->Draw();
 
-    c5->SaveAs("Neutron_Eta_Boosted.png");
+    c5->SaveAs("Neutron_Eta_Boosted_5.02.png");
 }
 
 
@@ -320,8 +332,14 @@ void DrawNE( TH1D* NeutronE2, TH1D* NeutronE3)
     NeutronE3->GetXaxis()->SetTitle("Energy");
     NeutronE3->GetYaxis()->SetTitle("Counts");
     NeutronE3->Draw("SAME L");
+    TLegend *legend6 = new TLegend(0.7, 0.7, 0.9, 0.9);
+    // legend36->AddEntry(E1, "0n0n", "l");
+    legend6->AddEntry(NeutronE2, "0nXn", "l");
+    legend6->AddEntry(NeutronE3, "XnXn", "l");
+    // legend->AddEntry(EtaT, "Total", "l");
+    legend6->Draw();
 
-    c6->SaveAs("Neutron_Energy_Boosted.png");
+    c6->SaveAs("Neutron_Energy_Boosted_5.02.png");
 }
 
 
@@ -373,7 +391,12 @@ void DrawXSection(TH1D* XS1, TH1D* XS2, TH1D* XS3, TH1D* XST)
 
     // Draw canvas
     c1->Draw();
-    c1->SaveAs("Classes_of_cross_section_NB.png");}
+    c1->SaveAs("Classes_of_cross_section_NB_5.02.png");
+    
+    
+}
+
+
 
 void DrawEnergy(TH1D* E1, TH1D* E2, TH1D* E3)
 {
@@ -386,25 +409,25 @@ void DrawEnergy(TH1D* E1, TH1D* E2, TH1D* E3)
 
     E1->GetXaxis()->SetTitle("Energy");
     E1->GetYaxis()->SetTitle("Counts");
-    E1->GetYaxis()->SetRangeUser(0, 500);
+    E1->GetYaxis()->SetRangeUser(0,2500);
     E1->Draw("L");
     E2->GetXaxis()->SetTitle("Energy");
     E2->GetYaxis()->SetTitle("Counts");
-    E2->GetYaxis()->SetRangeUser(0, 500);
+    E2->GetYaxis()->SetRangeUser(0, 2500);
     E2->Draw("SAME L");
     E3->GetXaxis()->SetTitle("Energy");
     E3->GetYaxis()->SetTitle("Counts");
-    E3->GetYaxis()->SetRangeUser(0, 500);
+    E3->GetYaxis()->SetRangeUser(0,2500);
     E3->Draw("SAME L");
     TLegend *legend3 = new TLegend(0.7, 0.7, 0.9, 0.9);
     legend3->AddEntry(E1, "0n0n", "l");
-    legend3->AddEntry(E1, "0nXn", "l");
+    legend3->AddEntry(E2, "0nXn", "l");
     legend3->AddEntry(E3, "XnXn", "l");
     // legend->AddEntry(EtaT, "Total", "l");
     legend3->Draw();
 
     c3->Draw();
-    c3->SaveAs("Energy_NB.png");
+    c3->SaveAs("Energy_NB_5.02.png");
 
 }
 
@@ -432,11 +455,11 @@ void DrawPseudo(TH1D* Eta1,TH1D* Eta2,TH1D* Eta3)
     Eta3->Draw("SAME L");
     TLegend *legend2 = new TLegend(0.7, 0.7, 0.9, 0.9);
     legend2->AddEntry(Eta1, "0n0n", "l");
-    legend2->AddEntry(Eta1, "0nXn", "l");
+    legend2->AddEntry(Eta2, "0nXn", "l");
     legend2->AddEntry(Eta3, "XnXn", "l");
     // legend->AddEntry(EtaT, "Total", "l");
     legend2->Draw();
 
     c2->Draw();
-    c2->SaveAs("Pseudo_rapidity_NB.png");
+    c2->SaveAs("Pseudo_rapidity_NB_5.02.png");
 }
