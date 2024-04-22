@@ -7,11 +7,11 @@
 #include "TClonesArray.h"
 #include <vector>
 
-struct neutronArray
-{
-  vector<TLorentzVector> n1Array;
-  vector<TLorentzVector> n2Array;
-};
+// struct neutronArray
+// {
+//   vector<TLorentzVector> n1Array;
+//   vector<TLorentzVector> n2Array;
+// };
 
 class NeutronGenerator : public TObject
 {
@@ -57,7 +57,11 @@ public:
 
 
   std::vector<Int_t> runSartreNoon(const Double_t photonk);
-  neutronArray createSartreNeutrons(const Int_t nBeam1, const Int_t nBeam2);
+  void createSartreNeutrons(const Int_t nBeam1, const Int_t nBeam2, std::vector<Double_t> &NeutronE, std::vector<Double_t> &NeutronEta, std::vector<Double_t> &NeutronY);
+
+  std::vector<Double_t> NeutronE;
+  std::vector<Double_t> NeutronEta;
+  std::vector<Double_t> NeutronY;
   
 protected:
 
@@ -65,6 +69,8 @@ protected:
   Double_t *NucleusBreakupProbability(const Double_t impactPar);
   Double_t GetBR(const Double_t energyPhoton, const Int_t nNeutrons); // BR = Branching Ration (I think)
   void 	CreateNeutrons(const Int_t nNeutronsBeam1, const Int_t nNeutronsBeam2);
+ 
+  
 
   void 	InitQAhistograms();
   
