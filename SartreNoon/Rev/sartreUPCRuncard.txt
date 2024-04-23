@@ -31,9 +31,9 @@
 # 
 #  Define beams 
 #
-# LHC UPC PbPb mode sqrt(s)=5.02 TeV
-eBeamEnergy =  2510
-hBeamEnergy =  2510
+# LHC UPC PbPb mode sqrt(s)=2.76 TeV
+eBeamEnergy =  1380
+hBeamEnergy =  1380
 A           =  208
 
 # Examples:

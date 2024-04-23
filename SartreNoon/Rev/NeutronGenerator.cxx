@@ -40,7 +40,7 @@ NeutronGenerator::NeutronGenerator()
   , nFluxes(2+(maxNeutrons)*(maxNeutrons+1)/2)
   , nucleus_Z(82)
   , nucleus_A(208)
-  , beamGamma(2675) //needs to be changed 
+  , beamGamma(1471) //needs to be changed 
   , gammaTarget(2.0*beamGamma*beamGamma-1.0)
   , neutronSepThr(0.0)
   , saturationEnergy(1e6)
@@ -300,8 +300,8 @@ std::vector<Int_t> NeutronGenerator::runSartreNoon(const Double_t photonK) // Ad
 
   std::vector<Int_t> result;
 
-  result.push_back(nNeutronsBeam1);
-  result.push_back(nNeutronsBeam2);
+if(nNeutronsBeam1 != nNeutronsBeam2 && gRandom->Rndm()<0.5){result.push_back(nNeutronsBeam1);result.push_back(nNeutronsBeam2);}
+else{result.push_back(nNeutronsBeam2);result.push_back(nNeutronsBeam1);}
 
   return result;
 
@@ -358,7 +358,7 @@ void NeutronGenerator::createSartreNeutrons(const Int_t nBeam1, const Int_t nBea
       // part->SetMomentum(vec.Px()*0.001, vec.Py()*0.001, vec.Pz()*0.001, vec.Energy()*0.001); //GeV convesion
       vec.SetPxPyPzE(vec.Px()*0.001,vec.Py()*0.001,vec.Pz()*0.001,vec.Energy()*0.001);  
       NeutronE.push_back(vec.Energy());
-      NeutronEta.push_back(vec.Eta());
+      NeutronEta.push_back(vec.PseudoRapidity());
       NeutronY.push_back(vec.Rapidity());
 
     }

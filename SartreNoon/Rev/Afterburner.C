@@ -115,7 +115,7 @@ void Afterburner()
 
         std::vector<Int_t> nNumbers = gen->runSartreNoon(k);
 
-        if(nNumbers[0]==0 & nNumbers[1] == 0) 
+        if(nNumbers[0]==0 && nNumbers[1] == 0) 
         {
             onon.push_back(y);
             ononEta.push_back(eta);
@@ -131,7 +131,7 @@ void Afterburner()
             onXnE.push_back(lv->Energy());
             gen->createSartreNeutrons(nNumbers[0],nNumbers[1],lnNeutronE,lnNeutronEta,lnNeutronY);
         }
-        else if(nNumbers[0]!=0 & nNumbers[1]!=0) 
+        else if(nNumbers[0]!=0 && nNumbers[1]!=0) 
         {
             XnXn.push_back(y);
             XnXnEta.push_back(eta);
@@ -201,9 +201,9 @@ void Afterburner()
 
     for(Int_t entry = 0; entry<1000; entry++)
     {
-        XS1->SetBinContent(entry,(hist1->GetBinContent(entry)) * 524 * 1000 /100000);
-        XS2->SetBinContent(entry,(hist2->GetBinContent(entry)) * 524 * 1000 /100000);
-        XS3->SetBinContent(entry,(hist3->GetBinContent(entry)) * 524 * 1000 /100000);
+        XS1->SetBinContent(entry,(hist1->GetBinContent(entry)) * 523 * 1000 /100000);
+        XS2->SetBinContent(entry,(hist2->GetBinContent(entry)) * 523 * 1000 /100000);
+        XS3->SetBinContent(entry,(hist3->GetBinContent(entry)) * 523 * 1000 /100000);
         XST->SetBinContent(entry,XS1->GetBinContent(entry)+XS2->GetBinContent(entry)+XS3->GetBinContent(entry));
     }
     
@@ -219,15 +219,15 @@ void Afterburner()
      * 
     */
 
-//    TH1D *NeutronE1 = new TH1D("NeutronE1","Neutron energy",1000,0,5);
+    //    TH1D *NeutronE1 = new TH1D("NeutronE1","Neutron energy",1000,0,5);
    TH1D *NeutronE2 = new TH1D("NeutronE2","Neutron energy",10000,0,5000);
    TH1D *NeutronE3 = new TH1D("NeutronE3","Neutron energy",10000,0,5000);
    
-//    TH1D *NeutronEta1 = new TH1D("NeutronEta1", "Neutron Pseudo Rapidity",1000,-10,10);
+    //    TH1D *NeutronEta1 = new TH1D("NeutronEta1", "Neutron Pseudo Rapidity",1000,-10,10);
    TH1D *NeutronEta2 = new TH1D("NeutronEta2", "Neutron Pseudo Rapidity",1000,-25,25);
    TH1D *NeutronEta3 = new TH1D("NeutronEta3", "Neutron Pseudo Rapidity",1000,-25,25);
 
-//    TH1D *NeutronY1 = new TH1D("NeutronY1","Neutron Rapidity",1000,-6,6);
+    //    TH1D *NeutronY1 = new TH1D("NeutronY1","Neutron Rapidity",1000,-6,6);
    TH1D *NeutronY2 = new TH1D("NeutronY2","Neutron Rapidity",1000,-25,25);
    TH1D *NeutronY3 = new TH1D("NeutronY3","Neutron Rapidity",1000,-25,25);
 
@@ -236,14 +236,14 @@ void Afterburner()
    {
     NeutronE2->Fill(lnNeutronE[i]);
     NeutronEta2->Fill(lnNeutronEta[i]);
-    NeutronY2->Fill(lnNeutronEta[i]);
+    NeutronY2->Fill(lnNeutronY[i]);
    }
 
    for(Int_t i=0; i<XnNeutronE.size(); i++)
    {
     NeutronE3->Fill(XnNeutronE[i]);
     NeutronEta3->Fill(XnNeutronEta[i]);
-    NeutronY3->Fill(XnNeutronEta[i]);
+    NeutronY3->Fill(XnNeutronY[i]);
    }
 
    std::cout<<"Number of Neutrons in onon: "<<onNeutronE.size()<<std::endl;
@@ -258,6 +258,15 @@ void Afterburner()
 
 }
 
+
+/**
+ * 
+ * 
+ * The Following functions are for ploting the data
+ * 
+ * 
+*/
+
 void DrawNY( TH1D* NeutronY2, TH1D* NeutronY3)
 {
     TCanvas *c4 = new TCanvas("c4", "Cross-section Plot", 1200, 800);
@@ -269,12 +278,13 @@ void DrawNY( TH1D* NeutronY2, TH1D* NeutronY3)
     // NeutronY1->GetXaxis()->SetTitle("Rapidity");
     // NeutronY1->GetYaxis()->SetTitle("Counts");
     // NeutronY1->Draw("L");
-    NeutronY2->GetXaxis()->SetTitle("Rapidity");
-    NeutronY2->GetYaxis()->SetTitle("Counts");
-    NeutronY2->Draw("L");
+    
     NeutronY3->GetXaxis()->SetTitle("Rapidity");
     NeutronY3->GetYaxis()->SetTitle("Counts");
-    NeutronY3->Draw("SAME L");
+    NeutronY3->Draw("L");
+    NeutronY2->GetXaxis()->SetTitle("Rapidity");
+    NeutronY2->GetYaxis()->SetTitle("Counts");
+    NeutronY2->Draw("SAME L");
     TLegend *legend4 = new TLegend(0.7, 0.7, 0.9, 0.9);
     // legend36->AddEntry(E1, "0n0n", "l");
     legend4->AddEntry(NeutronY2, "0nXn", "l");
@@ -282,7 +292,7 @@ void DrawNY( TH1D* NeutronY2, TH1D* NeutronY3)
     // legend->AddEntry(EtaT, "Total", "l");
     legend4->Draw();
 
-    c4->SaveAs("Neutron_Rapidity_Boosted_5.02.png");
+    c4->SaveAs("Neutron_Rapidity_Boosted_2.76.png");
 }
 
 void DrawNEta( TH1D* NeutronEta2, TH1D* NeutronEta3)
@@ -296,12 +306,13 @@ void DrawNEta( TH1D* NeutronEta2, TH1D* NeutronEta3)
     // NeutronEta1->GetXaxis()->SetTitle("Pseudo Rapidity");
     // NeutronEta1->GetYaxis()->SetTitle("Counts");
     // NeutronEta1->Draw("L");
-    NeutronEta2->GetXaxis()->SetTitle("Pseudo Rapidity");
-    NeutronEta2->GetYaxis()->SetTitle("Counts");
-    NeutronEta2->Draw("L");
+    
     NeutronEta3->GetXaxis()->SetTitle("Pseudo Rapidity");
     NeutronEta3->GetYaxis()->SetTitle("Counts");
-    NeutronEta3->Draw("SAME L");
+    NeutronEta3->Draw("L");
+    NeutronEta2->GetXaxis()->SetTitle("Pseudo Rapidity");
+    NeutronEta2->GetYaxis()->SetTitle("Counts");
+    NeutronEta2->Draw("SAME L");
     TLegend *legend5 = new TLegend(0.7, 0.7, 0.9, 0.9);
     // legend36->AddEntry(E1, "0n0n", "l");
     legend5->AddEntry(NeutronEta2, "0nXn", "l");
@@ -309,7 +320,7 @@ void DrawNEta( TH1D* NeutronEta2, TH1D* NeutronEta3)
     // legend->AddEntry(EtaT, "Total", "l");
     legend5->Draw();
 
-    c5->SaveAs("Neutron_Eta_Boosted_5.02.png");
+    c5->SaveAs("Neutron_Eta_Boosted_2.76.png");
 }
 
 
@@ -325,13 +336,14 @@ void DrawNE( TH1D* NeutronE2, TH1D* NeutronE3)
     // NeutronE1->GetYaxis()->SetTitle("Counts");
     // NeutronE1->Draw("L");
     // NeutronE2->GetXaxis()->SetRangeUser(0,15);
-    NeutronE2->GetXaxis()->SetTitle("Energy");
-    NeutronE2->GetYaxis()->SetTitle("Counts");
-    NeutronE2->Draw("L");
+    
     // NeutronE3->GetXaxis()->SetRangeUser(0,15);
     NeutronE3->GetXaxis()->SetTitle("Energy");
     NeutronE3->GetYaxis()->SetTitle("Counts");
-    NeutronE3->Draw("SAME L");
+    NeutronE3->Draw("L");
+    NeutronE2->GetXaxis()->SetTitle("Energy");
+    NeutronE2->GetYaxis()->SetTitle("Counts");
+    NeutronE2->Draw("SAME L");
     TLegend *legend6 = new TLegend(0.7, 0.7, 0.9, 0.9);
     // legend36->AddEntry(E1, "0n0n", "l");
     legend6->AddEntry(NeutronE2, "0nXn", "l");
@@ -339,7 +351,7 @@ void DrawNE( TH1D* NeutronE2, TH1D* NeutronE3)
     // legend->AddEntry(EtaT, "Total", "l");
     legend6->Draw();
 
-    c6->SaveAs("Neutron_Energy_Boosted_5.02.png");
+    c6->SaveAs("Neutron_Energy_Boosted_2.76.png");
 }
 
 
@@ -391,7 +403,7 @@ void DrawXSection(TH1D* XS1, TH1D* XS2, TH1D* XS3, TH1D* XST)
 
     // Draw canvas
     c1->Draw();
-    c1->SaveAs("Classes_of_cross_section_NB_5.02.png");
+    c1->SaveAs("Classes_of_cross_section_Boosted_2.76.png");
     
     
 }
@@ -427,7 +439,7 @@ void DrawEnergy(TH1D* E1, TH1D* E2, TH1D* E3)
     legend3->Draw();
 
     c3->Draw();
-    c3->SaveAs("Energy_NB_5.02.png");
+    c3->SaveAs("Energy_Boostedd_2.76.png");
 
 }
 
@@ -461,5 +473,5 @@ void DrawPseudo(TH1D* Eta1,TH1D* Eta2,TH1D* Eta3)
     legend2->Draw();
 
     c2->Draw();
-    c2->SaveAs("Pseudo_rapidity_NB_5.02.png");
+    c2->SaveAs("Pseudo_rapidity_Boosted_2.76.png");
 }
