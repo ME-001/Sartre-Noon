@@ -319,7 +319,7 @@ void NeutronGenerator::createSartreNeutrons(const Int_t nBeam1, const Int_t nBea
   
   Int_t nGenerated=0;
 
-  for(Int_t side = 1; side<=1; side++){
+  for(Int_t side = 0; side<=1; side++){
   
     if(nNeutrons[side] == 0)continue;
 
