@@ -26,6 +26,7 @@
 #include <cmath>
 #include "TMath.h"
 #include "TDatabasePDG.h"
+#include "TRandom.h"
 
 #include "NeutronGenerator.h"
 #endif
@@ -42,6 +43,7 @@ void DrawNEta(TH1D* NeuttonEta2, TH1D* NeutronEta3);
 
 void DrawNE(TH1D* NeutronE2, TH1D* NeutronE3);
 
+void DrawTotNE(TH1D *TotE);
 
 
 void Afterburner()
@@ -99,9 +101,26 @@ void Afterburner()
     std::vector<Double_t> XnNeutronEta;
     std::vector<Double_t> XnNeutronY;
 
+    std::vector<Double_t> NeutronTotE;
+
+    std::vector<Double_t> onEmptyE;
+    
+    
+
+    std::vector<Double_t> onEmptyEta;
+    
+    
+
+    std::vector<Double_t> onEmptyY;
+    
+    
+
+    std::vector<Double_t> VmBoostE;
+
 
 
     // Double_t Mv = 3.09;
+    Double_t beamGamma = 2675;
 
     for(Long64_t index = 0; index < nE; index++)
     {
@@ -113,7 +132,7 @@ void Afterburner()
 
         Double_t k = 0.5*lv->M()*TMath::Exp(TMath::Abs(y));
 
-        std::vector<Int_t> nNumbers = gen->runSartreNoon(k);
+        std::vector<Int_t> nNumbers = gen->runSartreNoon(k); // Gives number of neutrons in both beams
 
         if(nNumbers[0]==0 && nNumbers[1] == 0) 
         {
@@ -121,25 +140,58 @@ void Afterburner()
             ononEta.push_back(eta);
             on.push_back(index);
             ononE.push_back(lv->Energy());
-            gen->createSartreNeutrons(nNumbers[0],nNumbers[1],onNeutronE,onNeutronEta,onNeutronY);
+            // gen->createSartreNeutrons(nNumbers[0],nNumbers[1],onNeutronE,onNeutronEta,onNeutronY);
+
+            // NeutronTotE.push_back(0.0);
+            
         }
         else if(nNumbers[0]==0 || nNumbers[1]==0 )
         {
+            std::vector<Double_t> lnEmptyY;
+            std::vector<Double_t> lnEmptyEta;
+            std::vector<Double_t> lnEmptyE;
+
             onXn.push_back(y);
             onXnEta.push_back(eta);
             ln.push_back(index);
             onXnE.push_back(lv->Energy());
             gen->createSartreNeutrons(nNumbers[0],nNumbers[1],lnNeutronE,lnNeutronEta,lnNeutronY);
+            gen->createSartreNeutrons(nNumbers[0],nNumbers[1],lnEmptyE,lnEmptyEta,lnEmptyY);
+
+            Double_t TNE = 0;
+            for(Int_t i=0;i<lnEmptyE.size();i++)
+            {
+                TNE +=lnEmptyE[i];
+            }
+            NeutronTotE.push_back(TNE);
         }
         else if(nNumbers[0]!=0 && nNumbers[1]!=0) 
         {
+            std::vector<Double_t> XnEmptyY;
+            std::vector<Double_t> XnEmptyE;
+            std::vector<Double_t> XnEmptyEta;
+
             XnXn.push_back(y);
             XnXnEta.push_back(eta);
             Xn.push_back(index);
             XnXnE.push_back(lv->Energy());
             gen->createSartreNeutrons(nNumbers[0],nNumbers[1],XnNeutronE,XnNeutronEta,XnNeutronY);
+            gen->createSartreNeutrons(nNumbers[0],nNumbers[1],XnEmptyE,XnEmptyEta,XnEmptyY);
+
+            Double_t TNE = 0;
+            for(Int_t i=0;i<XnEmptyE.size();i++)
+            {
+                TNE +=XnEmptyE[i];
+            }
+            NeutronTotE.push_back(TNE);
         }
         else std::cout<<"Error in the Event"<<std::endl;
+
+        // if(gRandom->Rndm()<0.5)lv->Boost(0,0,1*TMath::Sqrt(1.0-1.0/beamGamma/beamGamma));
+        // // else lv->Boost(0,0,1*TMath::Sqrt(1.0-1.0/beamGamma/beamGamma));
+
+        // VmBoostE.push_back(lv->Energy());
+
     }
     delete lv;
     delete tree;
@@ -150,7 +202,7 @@ void Afterburner()
     std::cout<<"0nXn number of events: "<<onXn.size()<<std::endl;
     std::cout<<"XnXn number of events: "<<XnXn.size()<<std::endl;
 
-
+//--------------------------------------------------------------------------------------------------------
     Double_t minRange = -6;
     Double_t maxRange = 6;
     // Create histograms for each rapidity list
@@ -193,31 +245,38 @@ void Afterburner()
         E3->Fill(XnXnE[i]);
     }
 
-    // Create histograms for cross-section distribution
-    TH1D *XS1 = new TH1D("XS1", "Cros-Section", 1000, minRange, maxRange);
-    TH1D *XS2 = new TH1D("XS2", "Cros-Section", 1000, minRange,maxRange);
-    TH1D *XS3 = new TH1D("XS3", "Cros-Section", 1000, minRange,maxRange);
-    TH1D *XST = new TH1D("XST", "Cros-Section", 1000, minRange,maxRange);
+//     // Create histograms for cross-section distribution
+//     TH1D *XS1 = new TH1D("XS1", "Cros-Section", 1000, minRange, maxRange);
+//     TH1D *XS2 = new TH1D("XS2", "Cros-Section", 1000, minRange,maxRange);
+//     TH1D *XS3 = new TH1D("XS3", "Cros-Section", 1000, minRange,maxRange);
+//     TH1D *XST = new TH1D("XST", "Cros-Section", 1000, minRange,maxRange);
 
-    for(Int_t entry = 0; entry<1000; entry++)
-    {
-        XS1->SetBinContent(entry,(hist1->GetBinContent(entry)) * 523 * 1000 /100000);
-        XS2->SetBinContent(entry,(hist2->GetBinContent(entry)) * 523 * 1000 /100000);
-        XS3->SetBinContent(entry,(hist3->GetBinContent(entry)) * 523 * 1000 /100000);
-        XST->SetBinContent(entry,XS1->GetBinContent(entry)+XS2->GetBinContent(entry)+XS3->GetBinContent(entry));
-    }
+//     for(Int_t entry = 0; entry<1000; entry++)
+//     {
+//         XS1->SetBinContent(entry,(hist1->GetBinContent(entry)) * 523 * 1000 /100000);
+//         XS2->SetBinContent(entry,(hist2->GetBinContent(entry)) * 523 * 1000 /100000);
+//         XS3->SetBinContent(entry,(hist3->GetBinContent(entry)) * 523 * 1000 /100000);
+//         XST->SetBinContent(entry,XS1->GetBinContent(entry)+XS2->GetBinContent(entry)+XS3->GetBinContent(entry));
+//     }
     
-    DrawXSection(XS1,XS2,XS3,XST);
-    DrawEnergy(E1,E2,E3);
+//     /**
+//      * Plotting and Saving as png
+//     */
+//     // DrawXSection(XS1,XS2,XS3,XST);
+//     // DrawEnergy(E1,E2,E3);
     DrawPseudo(Eta1,Eta2,Eta3);
 
+//     /**
+//      * Plotting and Saving as png
+//     */
 
+//----------------------------------------------------------------------------------------------------------
 
-    /**
-     * 
-     * Neutron Data in the following histograms
-     * 
-    */
+//     /**
+//      * 
+//      * Neutron Data in the following histograms
+//      * 
+//     */
 
     //    TH1D *NeutronE1 = new TH1D("NeutronE1","Neutron energy",1000,0,5);
    TH1D *NeutronE2 = new TH1D("NeutronE2","Neutron energy",10000,0,5000);
@@ -246,15 +305,50 @@ void Afterburner()
     NeutronY3->Fill(XnNeutronY[i]);
    }
 
+    /**
+     * Plotting the graphs and saving as png file
+    */
+//    DrawNY(NeutronY2,NeutronY3);
+//    DrawNEta(NeutronEta2,NeutronEta3);
+//    DrawNE(NeutronE2,NeutronE3);
+   /**
+    *  End of Plotting
+    */
+   
+//-------------------------------------------------------------------------------------------------------------------------------
+
    std::cout<<"Number of Neutrons in onon: "<<onNeutronE.size()<<std::endl;
    std::cout<<"Number of Neutrons in onxn: "<<lnNeutronE.size()<<std::endl;
    std::cout<<"Number of Neutrons in xnxn: "<<XnNeutronE.size()<<std::endl;
 
 
-   DrawNY(NeutronY2,NeutronY3);
-   DrawNEta(NeutronEta2,NeutronEta3);
-   DrawNE(NeutronE2,NeutronE3);
-   
+
+//   TH1D *TotE = new TH1D("TOtE","Total Neutron Energy per Event",1000,0,30000);
+// //   TH1D *TotEL = new TH1D("ThotEL","Log scale of Neutron Energy per Event", 1000,0,10000);
+
+//   for(Int_t i=0; i<NeutronTotE.size();i++)
+//   {
+//     TotE->Fill(NeutronTotE[i]);
+//   }
+// //   for(Int_t i=0; i<100;i++)
+// //   {
+// //     TotEL->SetBinContent(i,TMath::Log10(TotE->GetBinContent(i)));
+// //   }
+
+//   DrawTotNE(TotE);
+// // //-------------------------------------------------------------------------------------------------------
+    // TH1D *VmB = new TH1D("VmB","Boosted Vectormeson energy",100,0,5000);
+    // TH1D *VmBL = new TH1D("VmBLog","Log scale",100,0,5000);
+    // for(Int_t i=0; i<VmBoostE.size();i++)
+    // {
+    //     VmB->Fill(VmBoostE[i]);
+    // }
+    // for(Int_t i=0; i<1000;i++)
+    // {
+    //     VmBL->SetBinContent(i,TMath::Log10(VmB->GetBinContent(i)));   
+    // } 
+
+    // DrawTotNE(VmBL);
 
 }
 
@@ -266,6 +360,18 @@ void Afterburner()
  * 
  * 
 */
+
+void DrawTotNE(TH1D *TotE)
+{
+    TCanvas *c7 = new TCanvas("c7","TOtal Neutron Energy per Event",1200,800);
+
+    TotE->GetXaxis()->SetTitle("Energy");
+    // TotE->SetAxisRange(0,350,"X");
+    TotE->GetYaxis()->SetTitle("Counts");
+    TotE->Draw("L");
+    c7->SetLogy();
+    c7->SaveAs("Total_Neutron_E_2.76_side2.png");
+}
 
 void DrawNY( TH1D* NeutronY2, TH1D* NeutronY3)
 {
@@ -292,7 +398,7 @@ void DrawNY( TH1D* NeutronY2, TH1D* NeutronY3)
     // legend->AddEntry(EtaT, "Total", "l");
     legend4->Draw();
 
-    c4->SaveAs("Neutron_Rapidity_Boosted_2.76.png");
+    c4->SaveAs("Neutron_Rapidity_Boosted_5.02.png");
 }
 
 void DrawNEta( TH1D* NeutronEta2, TH1D* NeutronEta3)
@@ -320,7 +426,7 @@ void DrawNEta( TH1D* NeutronEta2, TH1D* NeutronEta3)
     // legend->AddEntry(EtaT, "Total", "l");
     legend5->Draw();
 
-    c5->SaveAs("Neutron_Eta_Boosted_2.76.png");
+    c5->SaveAs("Neutron_Eta_Boosted_5.02.png");
 }
 
 
@@ -351,7 +457,7 @@ void DrawNE( TH1D* NeutronE2, TH1D* NeutronE3)
     // legend->AddEntry(EtaT, "Total", "l");
     legend6->Draw();
 
-    c6->SaveAs("Neutron_Energy_Boosted_2.76.png");
+    c6->SaveAs("Neutron_Energy_Boosted_5.02.png");
 }
 
 
@@ -403,7 +509,7 @@ void DrawXSection(TH1D* XS1, TH1D* XS2, TH1D* XS3, TH1D* XST)
 
     // Draw canvas
     c1->Draw();
-    c1->SaveAs("Classes_of_cross_section_Boosted_2.76.png");
+    c1->SaveAs("Classes_of_cross_section_Boosted_5.02.png");
     
     
 }
@@ -439,7 +545,7 @@ void DrawEnergy(TH1D* E1, TH1D* E2, TH1D* E3)
     legend3->Draw();
 
     c3->Draw();
-    c3->SaveAs("Energy_Boostedd_2.76.png");
+    c3->SaveAs("Energy_Boostedd_5.02.png");
 
 }
 
@@ -473,5 +579,5 @@ void DrawPseudo(TH1D* Eta1,TH1D* Eta2,TH1D* Eta3)
     legend2->Draw();
 
     c2->Draw();
-    c2->SaveAs("Pseudo_rapidity_Boosted_2.76.png");
+    c2->SaveAs("Pseudo_rapidity_Boosted_5.02.png");
 }

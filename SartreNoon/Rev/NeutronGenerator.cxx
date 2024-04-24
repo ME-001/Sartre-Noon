@@ -40,7 +40,7 @@ NeutronGenerator::NeutronGenerator()
   , nFluxes(2+(maxNeutrons)*(maxNeutrons+1)/2)
   , nucleus_Z(82)
   , nucleus_A(208)
-  , beamGamma(1471) //needs to be changed 
+  , beamGamma(2675) //needs to be changed 
   , gammaTarget(2.0*beamGamma*beamGamma-1.0)
   , neutronSepThr(0.0)
   , saturationEnergy(1e6)
@@ -319,7 +319,7 @@ void NeutronGenerator::createSartreNeutrons(const Int_t nBeam1, const Int_t nBea
   
   Int_t nGenerated=0;
 
-  for(Int_t side = 0; side<=1; side++){
+  for(Int_t side = 1; side<=1; side++){
   
     if(nNeutrons[side] == 0)continue;
 
