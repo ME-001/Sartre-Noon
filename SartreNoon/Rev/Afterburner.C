@@ -118,9 +118,8 @@ void Afterburner()
     std::vector<Double_t> VmBoostE;
 
 
-
     // Double_t Mv = 3.09;
-    Double_t beamGamma = 2675;
+    Double_t beamGamma = 1471;
 
     for(Long64_t index = 0; index < nE; index++)
     {
@@ -327,19 +326,19 @@ void Afterburner()
 
 
 
-//   TH1D *TotE = new TH1D("TotE","Total Neutron Energy in each Event",1000,0,30000);
-// //   TH1D *TotEL = new TH1D("ThotEL","Log scale of Neutron Energy per Event", 1000,0,10000);
+  TH1D *TotE = new TH1D("TotE","Total Neutron Energy in each Event",1000,0,30000);
+//   TH1D *TotEL = new TH1D("ThotEL","Log scale of Neutron Energy per Event", 1000,0,10000);
 
-//   for(Int_t i=0; i<NeutronTotE.size();i++)
+  for(Int_t i=0; i<NeutronTotE.size();i++)
+  {
+    TotE->Fill(NeutronTotE[i]);
+  }
+//   for(Int_t i=0; i<100;i++)
 //   {
-//     TotE->Fill(NeutronTotE[i]);
+//     TotEL->SetBinContent(i,TMath::Log10(TotE->GetBinContent(i)));
 //   }
-// //   for(Int_t i=0; i<100;i++)
-// //   {
-// //     TotEL->SetBinContent(i,TMath::Log10(TotE->GetBinContent(i)));
-// //   }
 
-//   DrawTotNE(TotE);
+  DrawTotNE(TotE);
 // // //-------------------------------------------------------------------------------------------------------
     // TH1D *VmB = new TH1D("VmB","Boosted Vectormeson energy",100,0,5000);
     // TH1D *VmBL = new TH1D("VmBLog","Log scale",100,0,5000);
@@ -370,11 +369,11 @@ void DrawTotNE(TH1D *TotE)
     TCanvas *c7 = new TCanvas("c7","TOtal Neutron Energy per Event side 1",1200,800);
 
     TotE->GetXaxis()->SetTitle("Energy(GeV)");
-    // TotE->SetAxisRange(0,350,"X");
+    TotE->SetAxisRange(0,5000,"X");
     TotE->GetYaxis()->SetTitle("Counts");
     TotE->Draw("L");
     c7->SetLogy();
-    c7->SaveAs("Total_Neutron_E_2.76_side2.png");
+    c7->SaveAs("Total_Neutron_E_2.76_side2_ss.png");
 }
 
 void DrawNY( TH1D* NeutronY2, TH1D* NeutronY3)

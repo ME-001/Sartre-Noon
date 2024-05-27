@@ -60,6 +60,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules")
 #
 ADD_SUBDIRECTORY(gemini)
 ADD_SUBDIRECTORY(src)
+ADD_SUBDIRECTORY(noon)
 
 #
 #  INSTALL the rest of SARTRE not already done in subdirectory cmakes

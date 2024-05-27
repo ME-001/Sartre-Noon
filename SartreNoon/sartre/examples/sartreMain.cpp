@@ -134,6 +134,7 @@ int main(int argc, char *argv[])
     tree.Branch("gamma","TLorentzVector", &gamma, 32000, 0);
     tree.Branch("vmDaughter1", "TLorentzVector", &vmDaughter1, 32000, 0);
     tree.Branch("vmDaughter2", "TLorentzVector", &vmDaughter2, 32000, 0);
+    tree.Branch("Neutrons","TLorentzVector",&neutrons,32000,0);
     
     if(settings->enableNuclearBreakup()){
         tree.Branch("protons", &protons);

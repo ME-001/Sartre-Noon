@@ -40,7 +40,7 @@ NeutronGenerator::NeutronGenerator()
   , nFluxes(2+(maxNeutrons)*(maxNeutrons+1)/2)
   , nucleus_Z(82)
   , nucleus_A(208)
-  , beamGamma(2675) //needs to be changed 
+  , beamGamma(1471) //needs to be changed 
   , gammaTarget(2.0*beamGamma*beamGamma-1.0)
   , neutronSepThr(0.0)
   , saturationEnergy(1e6)
@@ -319,7 +319,7 @@ void NeutronGenerator::createSartreNeutrons(const Int_t nBeam1, const Int_t nBea
   
   Int_t nGenerated=0;
 
-  for(Int_t side = 0; side<=1; side++){
+  for(Int_t side = 0; side<1; side++){
   
     if(nNeutrons[side] == 0)continue;
 
@@ -556,32 +556,32 @@ Double_t *NeutronGenerator::NucleusBreakupProbability(const Double_t impactPar)
   for(Int_t i=1; i<maxNeutrons; i++){ 
     prob_Breakup[i] += prob_Nn[i-1];
     for(Int_t j=1; i+j<maxNeutrons; j++){
-    if(maxExcitation<2) break;
+      if(maxExcitation<2) break;
       prob_Breakup[i+j] += prob_Nn[i-1]*prob_Nn[j-1]/2;
       if(maxExcitation<3) break;
       for(Int_t k=1; i+j+k<maxNeutrons; k++){ 
         prob_Breakup[i+j+k] += prob_Nn[i-1]*prob_Nn[j-1]*prob_Nn[k-1]/6;
-	if(maxExcitation<4) break;
+	      if(maxExcitation<4) break;
         for(Int_t l=1; i+j+k+l<maxNeutrons; l++){
           prob_Breakup[i+j+k+l] += prob_Nn[i-1]*prob_Nn[j-1]*prob_Nn[k-1]*prob_Nn[l-1]/24;
-	  if(maxExcitation<5) break;
-	  for(Int_t m=1; i+j+k+l+m<maxNeutrons; m++){
+	        if(maxExcitation<5) break;
+	        for(Int_t m=1; i+j+k+l+m<maxNeutrons; m++){
             prob_Breakup[i+j+k+l+m] += prob_Nn[i-1]*prob_Nn[j-1]*prob_Nn[k-1]*prob_Nn[l-1]*prob_Nn[m-1]/120;
-	    if(maxExcitation<6) break;
-	    for(Int_t n=1; i+j+k+l+m+n<maxNeutrons; n++){
+	          if(maxExcitation<6) break;
+	          for(Int_t n=1; i+j+k+l+m+n<maxNeutrons; n++){
               prob_Breakup[i+j+k+l+m+n] += prob_Nn[i-1]*prob_Nn[j-1]*prob_Nn[k-1]*prob_Nn[l-1]*prob_Nn[m-1]*prob_Nn[n-1]/720;
-	      if(maxExcitation<7) break;
-	        for(Int_t p=1; i+j+k+l+m+n+p<maxNeutrons; p++){
-                  prob_Breakup[i+j+k+l+m+n+p] += prob_Nn[i-1]*prob_Nn[j-1]*prob_Nn[k-1]*prob_Nn[l-1]*prob_Nn[m-1]*prob_Nn[n-1]*prob_Nn[p-1]/5040;
+	            if(maxExcitation<7) break;
+	            for(Int_t p=1; i+j+k+l+m+n+p<maxNeutrons; p++){
+                prob_Breakup[i+j+k+l+m+n+p] += prob_Nn[i-1]*prob_Nn[j-1]*prob_Nn[k-1]*prob_Nn[l-1]*prob_Nn[m-1]*prob_Nn[n-1]*prob_Nn[p-1]/5040;
+	            }
+	          }
 	        }
 	      }
-	    }
-	  }
-        }
       }
-      prob_Breakup[i] *= TMath::Exp(-1*prob_Xn);
-      norm_Xn += prob_Breakup[i];
-    } 
+    }
+    prob_Breakup[i] *= TMath::Exp(-1*prob_Xn);
+    norm_Xn += prob_Breakup[i];
+  } 
 
   for(Int_t i=1; i<maxNeutrons; i++) prob_Breakup[i] *= prob_Breakup[maxNeutrons]/norm_Xn;
   gUnitaryLeak->SetPoint(gUnitaryLeak->GetN(),impactPar,norm_Xn/prob_Breakup[maxNeutrons]);
