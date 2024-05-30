@@ -285,12 +285,28 @@ int main(int argc, char *argv[])
 
         Double_t k = 0.5*vm->M()*TMath::Exp(TMath::Abs(vm->Rapidity())); 
 
-        
+        //Modifying the beam gamma 
 
-        
-        
+        gen->SetBeamgamma(eIn->Gamma());
 
-        &event->particles.resize(7+n1+n2);
+        vector<Int_t> sideNeutron = gen->runSartreNoon(k);
+
+        Int_t n1 = sideNeutron[0];
+        Int_t n2 = sideNeutron[1];
+
+        event->particles.resize(7+n1+n2);
+
+        for(Int_t i = 0 ; i<n1 ; i++)
+        {
+            gen->createSartreNeutrons(n1, 7+i, event, 0, neutrons1);   
+        }
+
+        for(Int_t j = 0 ; j <n2 ; j++)
+        {
+            gen->createSartreNeutrons(n2, 7+n1+j, event, 1, neutrons2);  
+        }
+
+
         
         //If the event is incoherent, and nuclear breakup is enabled, fill the remnants to the tree
         if(settings->enableNuclearBreakup() and event->diffractiveMode == incoherent){
