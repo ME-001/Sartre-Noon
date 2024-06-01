@@ -375,22 +375,7 @@ int main(int argc, char *argv[])
     // get the y-distribution
     // loop over events one by one
     // for each event generate neutrons
-void noonAfterburner(const str rootfile)
-{
-    //Modification
-    //add 2 branches for n1 and n2; 1 branch for indices
-    
-    //Extract rapidities, make histogram of rapidities
 
-    //Create neutron generator
-    
-    //loop over number of events (maxEvents)
-        // get random y from histogram -> get photonk (photonk is already random)
-        //call runSartreNoon from neutron generator using photon k
-            // what does runSartreNoon need to do?
-            // n1 (array of particles), n2 (array of particles), N1, N2
-        
-}
     
 // UPC only
 void randomlyReverseBeams(Event* myEvent) {
