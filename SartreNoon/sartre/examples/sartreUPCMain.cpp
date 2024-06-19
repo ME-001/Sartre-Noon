@@ -214,16 +214,16 @@ int main(int argc, char *argv[])
     
     //Modification
     // Setting up meutrongenerator
-    NeutronGenerator *gen = new NeutronGenerator();
+    NeutronGenerator gen = new NeutronGenerator();
 
-    gen->SetStoreQA();
-    gen->SetStoreGeneratorFunctions();
-    gen->SetHadronicInteractionModel(NeutronGenerator::kGlauber);
-    gen->Initialize();
-    gen->SetRunMode(NeutronGenerator::kInterface);
-    gen->ReadENDF(kTRUE);
-    gen->LoadENDF("hENDF.root");
-    gen->Setup();
+    gen.SetStoreQA();
+    gen.SetStoreGeneratorFunctions();
+    gen.SetHadronicInteractionModel(NeutronGenerator::kGlauber);
+    gen.Initialize();
+    gen.SetRunMode(NeutronGenerator::kInterface);
+    gen.ReadENDF(kTRUE);
+    gen.LoadENDF("hENDF.root");
+    gen.Setup();
 
     //________________________________________________-
 
@@ -287,9 +287,9 @@ int main(int argc, char *argv[])
 
         //Modifying the beam gamma 
 
-        gen->SetBeamgamma(eIn->Gamma());
+        gen.SetBeamgamma(eIn->Gamma());
 
-        vector<Int_t> sideNeutron = gen->runSartreNoon(k);
+        vector<Int_t> sideNeutron = gen.runSartreNoon(k);
 
         Int_t n1 = sideNeutron[0];
         Int_t n2 = sideNeutron[1];
@@ -298,12 +298,12 @@ int main(int argc, char *argv[])
 
         for(Int_t i = 0 ; i<n1 ; i++)
         {
-            gen->createSartreNeutrons(n1, 7+i, event, 0, neutrons1);   
+            gen.createSartreNeutrons(n1, 7+i, event, 0, neutrons1);   
         }
 
         for(Int_t j = 0 ; j <n2 ; j++)
         {
-            gen->createSartreNeutrons(n2, 7+n1+j, event, 1, neutrons2);  
+            gen.createSartreNeutrons(n2, 7+n1+j, event, 1, neutrons2);  
         }
 
 

@@ -6,7 +6,7 @@
 #include "TTree.h"
 #include "TClonesArray.h"
 #include <vector>
-#include "Event.h"
+// #include "Event.h"
 
 // struct neutronArray
 // {
@@ -58,8 +58,8 @@ public:
 
 
   std::vector<Int_t> runSartreNoon(const Double_t photonk);
-  //void createSartreNeutrons(const Int_t nBeam1, const Int_t nBeam2, std::vector<Double_t> &NeutronE, std::vector<Double_t> &NeutronEta, std::vector<Double_t> &NeutronY);
-  void createSartreNeutrons(const Int_t nBeam, Int_t index, Event &event, Int_t side, TClonesArray &neutron);
+  void createSartreNeutrons(const Int_t nBeam1, const Int_t nBeam2, std::vector<Double_t> &NeutronE, std::vector<Double_t> &NeutronEta, std::vector<Double_t> &NeutronY);
+  // void createSartreNeutrons(const Int_t nBeam, Int_t index, Event &event, Int_t side, TClonesArray &neutron);
 
   // std::vector<Double_t> NeutronE;
   // std::vector<Double_t> NeutronEta;
@@ -105,8 +105,8 @@ private:
   Double_t		fRapMax;
   Double_t		fMassMin;
   Double_t		fMassMax;
-  ifstream 		fInputStarlightAscii;
-  ofstream 		fOutputStarlightAscii;
+  // ifstream 		fInputStarlightAscii;
+  // ofstream 		fOutputStarlightAscii;
   TString 		lineString;
   
   const Double_t 	neutron_M = 939.565;
