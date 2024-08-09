@@ -65,7 +65,7 @@ public:
   // std::vector<Double_t> NeutronEta;
   // std::vector<Double_t> NeutronY;
 
-  void SetBeamgamma(Double_t beamGamma);
+  // void SetBeamgamma(Double_t beamGamma);
   
 protected:
 

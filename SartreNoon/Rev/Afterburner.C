@@ -49,18 +49,18 @@ void DrawTotNE(TH1D *TotE);
 void Afterburner()
 {
 
-    NeutronGenerator gen = new NeutronGenerator();
+    NeutronGenerator *gen = new NeutronGenerator();
 
-    gen.SetStoreQA();
-    gen.SetStoreGeneratorFunctions();
-    gen.SetHadronicInteractionModel(NeutronGenerator::kGlauber);
-    gen.Initialize();
-    gen.SetRunMode(NeutronGenerator::kInterface);
-    gen.ReadENDF(kTRUE);
-    gen.LoadENDF("hENDF.root");
-    gen.Setup();
+    gen->SetStoreQA();
+    gen->SetStoreGeneratorFunctions();
+    gen->SetHadronicInteractionModel(NeutronGenerator::kGlauber);
+    gen->Initialize();
+    gen->SetRunMode(NeutronGenerator::kInterface);
+    gen->ReadENDF(kTRUE);
+    gen->LoadENDF("hENDF.root");
+    gen->Setup();
 
-    gen.SetBeamgamma(1461);
+    // gen->SetBeamgamma(1461);
 
     TFile *file = new TFile("example_Pb.root","READ");
 
@@ -132,7 +132,7 @@ void Afterburner()
 
         Double_t k = 0.5*lv->M()*TMath::Exp(TMath::Abs(y));
 
-        std::vector<Int_t> nNumbers = gen.runSartreNoon(k); // Gives number of neutrons in both beams
+        std::vector<Int_t> nNumbers = gen->runSartreNoon(k); // Gives number of neutrons in both beams
 
         if(nNumbers[0]==0 && nNumbers[1] == 0) 
         {
@@ -156,10 +156,10 @@ void Afterburner()
             ln.push_back(index);
             onXnE.push_back(lv->Energy());
             
-            gen.createSartreNeutrons(nNumbers[0],nNumbers[1],lnNeutronE,lnNeutronEta,lnNeutronY);
+            gen->createSartreNeutrons(nNumbers[0],nNumbers[1],lnNeutronE,lnNeutronEta,lnNeutronY);
             
-            if(gRandom->Rndm()<0.5)gen.createSartreNeutrons(nNumbers[0],nNumbers[1],lnEmptyE,lnEmptyEta,lnEmptyY);
-            else gen.createSartreNeutrons(nNumbers[1],nNumbers[0],lnEmptyE,lnEmptyEta,lnEmptyY);
+            if(gRandom->Rndm()<0.5)gen->createSartreNeutrons(nNumbers[0],nNumbers[1],lnEmptyE,lnEmptyEta,lnEmptyY);
+            else gen->createSartreNeutrons(nNumbers[1],nNumbers[0],lnEmptyE,lnEmptyEta,lnEmptyY);
 
             Double_t TNE = 0;
             for(Int_t i=0;i<lnEmptyE.size();i++)
@@ -178,9 +178,9 @@ void Afterburner()
             XnXnEta.push_back(eta);
             Xn.push_back(index);
             XnXnE.push_back(lv->Energy());
-            gen.createSartreNeutrons(nNumbers[0],nNumbers[1],XnNeutronE,XnNeutronEta,XnNeutronY);
-            if(gRandom->Rndm()<0.5)gen.createSartreNeutrons(nNumbers[0],nNumbers[1],XnEmptyE,XnEmptyEta,XnEmptyY);
-            else gen.createSartreNeutrons(nNumbers[1],nNumbers[0],XnEmptyE,XnEmptyEta,XnEmptyY);
+            gen->createSartreNeutrons(nNumbers[0],nNumbers[1],XnNeutronE,XnNeutronEta,XnNeutronY);
+            if(gRandom->Rndm()<0.5)gen->createSartreNeutrons(nNumbers[0],nNumbers[1],XnEmptyE,XnEmptyEta,XnEmptyY);
+            else gen->createSartreNeutrons(nNumbers[1],nNumbers[0],XnEmptyE,XnEmptyEta,XnEmptyY);
 
             Double_t TNE = 0;
             for(Int_t i=0;i<XnEmptyE.size();i++)

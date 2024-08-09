@@ -42,7 +42,7 @@ NeutronGenerator::NeutronGenerator()
   , nFluxes(2+(maxNeutrons)*(maxNeutrons+1)/2)
   , nucleus_Z(82)
   , nucleus_A(208)
-  // , beamGamma(1471) //needs to be changed 
+  , beamGamma(1471) //needs to be changed 
   , gammaTarget(2.0*beamGamma*beamGamma-1.0)
   , neutronSepThr(0.0)
   , saturationEnergy(1e6)
@@ -1281,7 +1281,7 @@ void NeutronGenerator::FromVectorToMatrix(Int_t index, Int_t &row, Int_t &col)
 // MOST IMPORTANT LINES OF CODES DON'T EDIT OR CHANGE
 //______________________________________________________________________________
 
-void NeutronGenerator::SetBeamgamma(Double_t beamG)
-{
-  beamGamma = beamG;
-}
+// void NeutronGenerator::SetBeamgamma(Double_t beamG)
+// {
+//   beamGamma = beamG;
+// }
