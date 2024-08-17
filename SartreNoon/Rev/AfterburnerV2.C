@@ -10,6 +10,8 @@
 //Importing necessary packages
 
 #ifdef __CLING__
+
+// Copied from runBreakup.C as is, from noon
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -24,16 +26,13 @@
 #include "TLegend.h"
 #include "NeutronGenerator.cxx+g"
 
-#include <vector>
+// Included by us (DSR, BPN) for our use-case
+#include <vector>  
 #include "TFile.h"
 #include "TTree.h"
 #include "TLorentzVector.h"
 #include <cmath>
 
-#include "TFile.h"
-#include "TTree.h"
-#include "TLorentzVector.h"
-#include <cmath>
 #include "TMath.h"
 #include "TDatabasePDG.h"
 #include "TRandom.h"
@@ -43,7 +42,7 @@
 
 //Defining different fucntions to print the graphs
 
-void DrawXSection(TH1D* XS1, TH1D* XS2, TH1D* XS3, TH1D* XST); // For drawing crss-section
+void DrawXSection(TH1D* XS1, TH1D* XS2, TH1D* XS3, TH1D* XST); // For drawing cross-section
 
 void DrawEnergy(TH1D* E1, TH1D* E2, TH1D* E3); // for drawing the energies of vm 
 
@@ -68,21 +67,22 @@ void AfterburnerV2()
     NeutronGenerator *gen = new NeutronGenerator(); //it is a pointer varibale so every thing will be done in the NeutronGenerator programme
 
     //assigning different parameters of the neutron generator
-
-    gen->SetStoreQA();
-    gen->SetStoreGeneratorFunctions();
-    gen->SetHadronicInteractionModel(NeutronGenerator::kGlauber);
-    gen->Initialize();
-    gen->SetRunMode(NeutronGenerator::kInterface);
-    gen->ReadENDF(kTRUE);
-    gen->LoadENDF("hENDF.root");
+    // below were taken as is from runBreakup.C in noon files
+    gen->SetStoreQA(); // sets kStoreQA = True; refer neutronGenerator.h and neutronGenerator.cxx files
+    gen->SetStoreGeneratorFunctions(); //similar to above
+    gen->SetHadronicInteractionModel(NeutronGenerator::kGlauber); //selects model for ion interaction
+    gen->Initialize(); //loads default data used in noon (photon flux, cross-section etc.)
+    gen->SetRunMode(NeutronGenerator::kInterface); // runMode = kInterface is plain neutron generation
+    gen->ReadENDF(kTRUE); //enables reading of ENDF data tables
+    gen->LoadENDF("hENDF.root"); // data table for energy distribution amongst created neutrons
     gen->Setup();
 
 
-    /**
-     * Rminder: you have to maually set the beamgamma in the NeutronGenerator.CXX for each run with different parameter sets
+    /** !!!
+     * reminder: you have to maually set the beamgamma in the NeutronGenerator.CXX for each run with different parameter sets
      * You can check for the beamgamma in the root file
-    */
+        !!!
+    */ 
 
 
     /**
@@ -103,36 +103,47 @@ void AfterburnerV2()
 
     /**
      * Manually created various vectors(Lists/arrays) to store the data for different parameter values for vector meson and the neutrons
+     * 0n0n -> No breakup neutrons from both beams
+     * 0nXn -> Breakup neutrons from either one of two beams 
+     * XnXn -> Breakup neutrons from both beams
      */
+
 
     std::vector<Double_t> onon; //srotes rapiity for 0n0n neutron Class
     std::vector<Double_t> onXn; // stores rapidity for 0nXn neutron Class
     std::vector<Double_t> XnXn; // stores rapidity for XnXN neutron Class
 
+    // Pseudo-rapidities
     std::vector<Double_t> ononEta;//stores pseudo rapidity 
     std::vector<Double_t> onXnEta;//stores pseudo rapidity
     std::vector<Double_t> XnXnEta;//stores pseudo rapidity
 
+    // Indices
     std::vector<Int_t> on; //stores index
     std::vector<Int_t> ln; // stores index
     std::vector<Int_t> Xn; //stores index
 
+    // Energies VM
     std::vector<Double_t> ononE;
     std::vector<Double_t> onXnE;
     std::vector<Double_t> XnXnE;
 
-    std::vector<Double_t> onNeutronE;
-    std::vector<Double_t> onNeutronEta;
-    std::vector<Double_t> onNeutronY;
+    // 0n0n class Neutron kinematics
+    std::vector<Double_t> onNeutronE; // energy
+    std::vector<Double_t> onNeutronEta; // pseudorapidity
+    std::vector<Double_t> onNeutronY; // rapidity
     
+    // 0nXn class neutron kinematics
     std::vector<Double_t> lnNeutronE;
     std::vector<Double_t> lnNeutronEta;
     std::vector<Double_t> lnNeutronY;
 
+    // XnXn class neutron kinematics
     std::vector<Double_t> XnNeutronE;
     std::vector<Double_t> XnNeutronEta;
     std::vector<Double_t> XnNeutronY;
 
+    // ZDC Calorimeter; total energy of neutrons
     std::vector<Double_t> NeutronTotE;
 
     std::vector<Double_t> onEmptyE;
@@ -141,6 +152,7 @@ void AfterburnerV2()
     
     std::vector<Double_t> onEmptyY;
     
+    // Boosted vm energies
     std::vector<Double_t> VmBoostE;
 
     //looping over all the entries of the root file
