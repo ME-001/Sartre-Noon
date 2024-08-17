@@ -194,7 +194,7 @@ void AfterburnerV2()
             if(gRandom->Rndm()<0.5)gen->createSartreNeutrons(nNumbers[0],nNumbers[1],lnEmptyE,lnEmptyEta,lnEmptyY);
             else gen->createSartreNeutrons(nNumbers[1],nNumbers[0],lnEmptyE,lnEmptyEta,lnEmptyY);
 
-            Double_t TNE = 0;
+            Double_t TNE = 0; //total neutron energy (for ZDC Calorimeter)
             for(Int_t i=0;i<lnEmptyE.size();i++)
             {
                 TNE +=lnEmptyE[i];
