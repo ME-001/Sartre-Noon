@@ -1,11 +1,6 @@
-
-
-
-
 /**
  * General convention is E= energy; Y,y = Rapidity; Eta= pseudo rapidity 
 */
-
 
 //Importing necessary packages
 
@@ -180,7 +175,8 @@ void Afterburner()
 
         else if(nNumbers[0]==0 || nNumbers[1]==0 )              // loop to collect data for 0nXn events
         {
-            std::vector<Double_t> lnEmptyY;
+            // these are to store neutrons for individual events only and resets at each event
+            std::vector<Double_t> lnEmptyY; 
             std::vector<Double_t> lnEmptyEta;
             std::vector<Double_t> lnEmptyE;
 
@@ -195,11 +191,10 @@ void Afterburner()
 
             /**
              * While plotting for ZDC calorimeter neutron energies, manually put the beamside to either 0 or 1 in the NeutronGenerator.cxx 
-             * You can do this by changing the condition at line 380 of NeutronGenerator.cxx, i.e. the for loop.
+             * You can do this by changing the condition at line 310 of NeutronGenerator.cxx, i.e. the for loop.
+             * comment the below lines of code if not calculating ZDC calorimeter data
              */
-            
-            if(gRandom->Rndm()<0.5)gen->createSartreNeutrons(nNumbers[0],nNumbers[1],lnEmptyE,lnEmptyEta,lnEmptyY);
-            else gen->createSartreNeutrons(nNumbers[1],nNumbers[0],lnEmptyE,lnEmptyEta,lnEmptyY);
+            gen->createSartreNeutrons(nNumbers[0],nNumbers[1],lnEmptyE,lnEmptyEta,lnEmptyY);
 
             Double_t TNE = 0; //total neutron energy (for ZDC Calorimeter)
             for(Int_t i=0;i<lnEmptyE.size();i++)
@@ -211,6 +206,7 @@ void Afterburner()
 
         else if(nNumbers[0]!=0 && nNumbers[1]!=0) 
         {
+            // these are to store neutrons for individual events only and resets at each event
             std::vector<Double_t> XnEmptyY;
             std::vector<Double_t> XnEmptyE;
             std::vector<Double_t> XnEmptyEta;
@@ -225,10 +221,10 @@ void Afterburner()
 
             /**
              * While plotting for ZDC calorimeter neutron energies, manually put the beamside to either 0 or 1 in the NeutronGenerator.cxx 
-             * You can do this by changing the condition at line 380 of NeutronGenerator.cxx, i.e. the for loop.
+             * You can do this by changing the condition at line 310 of NeutronGenerator.cxx, i.e. the for loop.
+             * comment the below lines of code if not calculating ZDC calorimeter data
              */
-            if(gRandom->Rndm()<0.5)gen->createSartreNeutrons(nNumbers[0],nNumbers[1],XnEmptyE,XnEmptyEta,XnEmptyY);
-            else gen->createSartreNeutrons(nNumbers[1],nNumbers[0],XnEmptyE,XnEmptyEta,XnEmptyY);
+            gen->createSartreNeutrons(nNumbers[0],nNumbers[1],XnEmptyE,XnEmptyEta,XnEmptyY);
 
             Double_t TNE = 0;
             for(Int_t i=0;i<XnEmptyE.size();i++)
@@ -289,7 +285,11 @@ void Afterburner()
     std::cout<<"Number of Neutrons in onxn: "<<lnNeutronE.size()<<std::endl;
     std::cout<<"Number of Neutrons in xnxn: "<<XnNeutronE.size()<<std::endl;
 
-
+    /**
+     * This part is for plotting the ZDC calorimeter datarecreation. 
+     * Please commnet it out when not is use, in use comment other plots and functions: to save time and unnecessary calculations
+     * While using please plot for ither one side and not both in NeutronGenerator.cxx
+     */
     TH1D *TotE = new TH1D("TotE","Total Neutron Energy in each Event",1000,0,30000);
 
     for(Int_t i=0; i<NeutronTotE.size();i++)
@@ -328,8 +328,6 @@ void Afterburner()
     
     // onon class of events
     for (Int_t i; i<onon.size();i++) {
-        
-        // bc->GetEntry(on[i]);
 
         hist1->Fill(onon[i]);
         Eta1->Fill(ononEta[i]);
@@ -339,9 +337,7 @@ void Afterburner()
     
     // onXn class of events
     for (Int_t i; i<onXn.size();i++) {
-        
-        // bc->GetEntry(ln[i]);
-        
+                
         hist2->Fill(onXn[i]);
         Eta2->Fill(onXnEta[i]);
         E2->Fill(onXnE[i]);
@@ -349,8 +345,6 @@ void Afterburner()
     
     // XnXn class of events
     for (Int_t i; i<XnXn.size();i++) {
-
-        // bc->GetEntry(Xn[i]);
 
         hist3->Fill(XnXn[i]);
         Eta3->Fill(XnXnEta[i]);
