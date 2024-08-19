@@ -1,17 +1,5 @@
-/**
- * 
- * This is AfterburnerV2.c i.e. the 2nd itiration of the AFterburner.C
- * It is basically the same as previous version but with clearer notations and comments for user friendliness
- *
- * General convention is E= energy; Y,y = Rapidity; Eta= pseudo rapidity 
-*/
-
-
-//Importing necessary packages
 
 #ifdef __CLING__
-
-// Copied from runBreakup.C as is, from noon
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -26,13 +14,16 @@
 #include "TLegend.h"
 #include "NeutronGenerator.cxx+g"
 
-// Included by us (DSR, BPN) for our use-case
-#include <vector>  
+#include <vector>
 #include "TFile.h"
 #include "TTree.h"
 #include "TLorentzVector.h"
 #include <cmath>
 
+#include "TFile.h"
+#include "TTree.h"
+#include "TLorentzVector.h"
+#include <cmath>
 #include "TMath.h"
 #include "TDatabasePDG.h"
 #include "TRandom.h"
@@ -40,145 +31,121 @@
 #include "NeutronGenerator.h"
 #endif
 
-//Defining different fucntions to print the graphs
+void DrawXSection(TH1D* XS1, TH1D* XS2, TH1D* XS3, TH1D* XST);
 
-void DrawXSection(TH1D* XS1, TH1D* XS2, TH1D* XS3, TH1D* XST); // For drawing cross-section
+void DrawEnergy(TH1D* E1, TH1D* E2, TH1D* E3);
 
-void DrawEnergy(TH1D* E1, TH1D* E2, TH1D* E3); // for drawing the energies of vm 
+void DrawPseudo(TH1D* Eta1,TH1D* Eta2,TH1D* Eta3);
 
-void DrawPseudoRapidity(TH1D* Eta1,TH1D* Eta2,TH1D* Eta3); // for drawing pseudo rapidity of the vm
+void DrawNY(TH1D* NeutronY2, TH1D* NeutronY3);
 
-void DrawNeutronRapidity(TH1D* NeutronY2, TH1D* NeutronY3); // for drawing the rapidity of neutrons
+void DrawNEta(TH1D* NeuttonEta2, TH1D* NeutronEta3);
 
-void DrawNeutronPseudorapidity(TH1D* NeuttonEta2, TH1D* NeutronEta3); // for drawning the pseudo rapidities of the neutrons
+void DrawNE(TH1D* NeutronE2, TH1D* NeutronE3);
 
-void DrawNeutronEnergy(TH1D* NeutronE2, TH1D* NeutronE3); // for drawning the neutron energies
+void DrawTotNE(TH1D *TotE);
 
-void DrawTotNeutronEnergy(TH1D *TotE); //for the neutron energy depositd graph
-
-//Defining the main function
 
 void AfterburnerV2()
 {
-    /**
-     * creating a neutron generator object that will be used for neutron related calculations
-     */
 
-    NeutronGenerator *gen = new NeutronGenerator(); //it is a pointer varibale so every thing will be done in the NeutronGenerator programme
+    NeutronGenerator *gen = new NeutronGenerator();
 
-    //assigning different parameters of the neutron generator
-    // below were taken as is from runBreakup.C in noon files
-    gen->SetStoreQA(); // sets kStoreQA = True; refer neutronGenerator.h and neutronGenerator.cxx files
-    gen->SetStoreGeneratorFunctions(); //similar to above
-    gen->SetHadronicInteractionModel(NeutronGenerator::kGlauber); //selects model for ion interaction
-    gen->Initialize(); //loads default data used in noon (photon flux, cross-section etc.)
-    gen->SetRunMode(NeutronGenerator::kInterface); // runMode = kInterface is plain neutron generation
-    gen->ReadENDF(kTRUE); //enables reading of ENDF data tables
-    gen->LoadENDF("hENDF.root"); // data table for energy distribution amongst created neutrons
+    gen->SetStoreQA();
+    gen->SetStoreGeneratorFunctions();
+    gen->SetHadronicInteractionModel(NeutronGenerator::kGlauber);
+    gen->Initialize();
+    gen->SetRunMode(NeutronGenerator::kInterface);
+    gen->ReadENDF(kTRUE);
+    gen->LoadENDF("hENDF.root");
     gen->Setup();
 
+    // gen->SetBeamgamma(1461);
 
-    /** !!!
-     * reminder: you have to maually set the beamgamma in the NeutronGenerator.CXX for each run with different parameter sets
-     * You can check for the beamgamma in the root file
-        !!!
-    */ 
-
-
-    /**
-     * Creating a TTree file and acessing the root objects fromt he example_Pb.root file 
-     * Mind that both the Afterburner and the example_Pb.root files should be in the same location
-    */
     TFile *file = new TFile("example_Pb.root","READ");
 
     TTree *tree = dynamic_cast<TTree*>(file->Get("tree"));
 
-    Long64_t nE = tree->GetEntries(); // Get all the entries of the roor file
+    Long64_t nE = tree->GetEntries();
 
-    TLorentzVector* lv = new TLorentzVector; // a LorentzVector object 
+    TLorentzVector* lv = new TLorentzVector;
 
-    TBranch *bc = tree->GetBranch("vm"); // Accessing the vector meson branch
+    TBranch *bc = tree->GetBranch("vm");
 
-    bc->SetAddress(&lv); // pointint the LorentzVector to the vector meson branch to access that data
+    bc->SetAddress(&lv);
 
-    /**
-     * Manually created various vectors(Lists/arrays) to store the data for different parameter values for vector meson and the neutrons
-     * 0n0n -> No breakup neutrons from both beams
-     * 0nXn -> Breakup neutrons from either one of two beams 
-     * XnXn -> Breakup neutrons from both beams
-     */
+    std::vector<Double_t> onon; //srotes rapiity
+    std::vector<Double_t> onXn; // stores rapidity
+    std::vector<Double_t> XnXn; // stores rapidity
 
-
-    std::vector<Double_t> onon; //srotes rapiity for 0n0n neutron Class
-    std::vector<Double_t> onXn; // stores rapidity for 0nXn neutron Class
-    std::vector<Double_t> XnXn; // stores rapidity for XnXN neutron Class
-
-    // Pseudo-rapidities
-    std::vector<Double_t> ononEta;//stores pseudo rapidity 
+    std::vector<Double_t> ononEta;//stores pseudo rapidity
     std::vector<Double_t> onXnEta;//stores pseudo rapidity
     std::vector<Double_t> XnXnEta;//stores pseudo rapidity
 
-    // Indices
-    std::vector<Int_t> on; 
-    std::vector<Int_t> ln; 
-    std::vector<Int_t> Xn; 
+    std::vector<Int_t> on; //stores index
+    std::vector<Int_t> ln; // stores index
+    std::vector<Int_t> Xn; //stores index
 
-    // Energies VM
     std::vector<Double_t> ononE;
     std::vector<Double_t> onXnE;
     std::vector<Double_t> XnXnE;
 
-    // 0n0n class Neutron kinematics
-    std::vector<Double_t> onNeutronE; // energy
-    std::vector<Double_t> onNeutronEta; // pseudorapidity
-    std::vector<Double_t> onNeutronY; // rapidity
+    std::vector<Double_t> onNeutronE;
+    std::vector<Double_t> onNeutronEta;
+    std::vector<Double_t> onNeutronY;
     
-    // 0nXn class neutron kinematics
     std::vector<Double_t> lnNeutronE;
     std::vector<Double_t> lnNeutronEta;
     std::vector<Double_t> lnNeutronY;
 
-    // XnXn class neutron kinematics
     std::vector<Double_t> XnNeutronE;
     std::vector<Double_t> XnNeutronEta;
     std::vector<Double_t> XnNeutronY;
 
-    // ZDC Calorimeter; total energy of neutrons
     std::vector<Double_t> NeutronTotE;
 
     std::vector<Double_t> onEmptyE;
+    
+    
 
     std::vector<Double_t> onEmptyEta;
     
+    
+
     std::vector<Double_t> onEmptyY;
     
-    // Boosted vm energies
+    
+
     std::vector<Double_t> VmBoostE;
 
-    //looping over all the entries of the root file
+
+    // Double_t Mv = 3.09;
+    Double_t beamGamma = 1471;
 
     for(Long64_t index = 0; index < nE; index++)
     {
-        bc->GetEntry(index);  // get specific entry umber
+        bc->GetEntry(index);
 
-        Double_t y = lv->Rapidity(); // store the rapidity corresponding to that entry
+        Double_t y = lv->Rapidity();
 
-        Double_t eta= lv->Eta(); // store the pseudo rapidity corresponding to that entry
+        Double_t eta= lv->Eta();
 
-        Double_t k = 0.5*lv->M()*TMath::Exp(TMath::Abs(y)); //clculates the photon energy for vm production for that entry
+        Double_t k = 0.5*lv->M()*TMath::Exp(TMath::Abs(y));
 
         std::vector<Int_t> nNumbers = gen->runSartreNoon(k); // Gives number of neutrons in both beams
 
-
-        if(nNumbers[0]==0 && nNumbers[1] == 0) // loop to collect data for the 0n0n class of events
+        if(nNumbers[0]==0 && nNumbers[1] == 0) 
         {
             onon.push_back(y);
             ononEta.push_back(eta);
             on.push_back(index);
             ononE.push_back(lv->Energy());
-        }
+            // gen->createSartreNeutrons(nNumbers[0],nNumbers[1],onNeutronE,onNeutronEta,onNeutronY);
 
-        else if(nNumbers[0]==0 || nNumbers[1]==0 ) // loop to collect data for 0nXn events
+            // NeutronTotE.push_back(0.0);
+            
+        }
+        else if(nNumbers[0]==0 || nNumbers[1]==0 )
         {
             std::vector<Double_t> lnEmptyY;
             std::vector<Double_t> lnEmptyEta;
@@ -190,25 +157,17 @@ void AfterburnerV2()
             onXnE.push_back(lv->Energy());
             
             gen->createSartreNeutrons(nNumbers[0],nNumbers[1],lnNeutronE,lnNeutronEta,lnNeutronY);
-
-            // the below code is for collecting neutron eneries for a single beam side.
-
-            /**
-             * While plotting for ZDC calorimeter neutron energies, manually put the beamside to either 0 or 1 in the NeutronGenerator.cxx 
-             * You can do this by changing the condition at line 380 of NeutronGenerator.cxx, i.e. the for loop.
-             */
             
             if(gRandom->Rndm()<0.5)gen->createSartreNeutrons(nNumbers[0],nNumbers[1],lnEmptyE,lnEmptyEta,lnEmptyY);
             else gen->createSartreNeutrons(nNumbers[1],nNumbers[0],lnEmptyE,lnEmptyEta,lnEmptyY);
 
-            Double_t TNE = 0; //total neutron energy (for ZDC Calorimeter)
+            Double_t TNE = 0;
             for(Int_t i=0;i<lnEmptyE.size();i++)
             {
                 TNE +=lnEmptyE[i];
             }
             NeutronTotE.push_back(TNE);
         }
-
         else if(nNumbers[0]!=0 && nNumbers[1]!=0) 
         {
             std::vector<Double_t> XnEmptyY;
@@ -220,13 +179,6 @@ void AfterburnerV2()
             Xn.push_back(index);
             XnXnE.push_back(lv->Energy());
             gen->createSartreNeutrons(nNumbers[0],nNumbers[1],XnNeutronE,XnNeutronEta,XnNeutronY);
-
-            // the below code is for collecting neutron eneries for a single beam side.
-
-            /**
-             * While plotting for ZDC calorimeter neutron energies, manually put the beamside to either 0 or 1 in the NeutronGenerator.cxx 
-             * You can do this by changing the condition at line 380 of NeutronGenerator.cxx, i.e. the for loop.
-             */
             if(gRandom->Rndm()<0.5)gen->createSartreNeutrons(nNumbers[0],nNumbers[1],XnEmptyE,XnEmptyEta,XnEmptyY);
             else gen->createSartreNeutrons(nNumbers[1],nNumbers[0],XnEmptyE,XnEmptyEta,XnEmptyY);
 
@@ -238,162 +190,182 @@ void AfterburnerV2()
             NeutronTotE.push_back(TNE);
         }
         else std::cout<<"Error in the Event"<<std::endl;
-    }
 
-    /**close the used objects 
-     * It's a good practice and prevent errors or data leaks on the code.
-     */
+        // if(gRandom->Rndm()<0.5)lv->Boost(0,0,1*TMath::Sqrt(1.0-1.0/beamGamma/beamGamma));
+        // // else lv->Boost(0,0,1*TMath::Sqrt(1.0-1.0/beamGamma/beamGamma));
+
+        // VmBoostE.push_back(lv->Energy());
+
+    }
     delete lv;
     delete tree;
     file->Close();
     delete file;
 
-    // Print the number of events in each class of events.
     std::cout<<"0n0n number of events: "<<onon.size()<<std::endl;
     std::cout<<"0nXn number of events: "<<onXn.size()<<std::endl;
     std::cout<<"XnXn number of events: "<<XnXn.size()<<std::endl;
 
-    // Histograms for different kinematics
-    TH1D *NeutronEln = new TH1D("NeutronE2","Neutron energy",10000,0,5000); // neutron energy values for 0nXn class of events
-    TH1D *NeutronEXn = new TH1D("NeutronE3","Neutron energy",10000,0,5000); // neutron energy values for XnXn class of events
+//--------------------------------------------------------------------------------------------------------
+    // Double_t minRange = -6;
+    // Double_t maxRange = 6;
+    // // Create histograms for each rapidity list
+    // TH1D *hist1 = new TH1D("hist1", "vm Rapidity Distribution ", 1000, minRange,maxRange);
+    // TH1D *hist2 = new TH1D("hist2", "vm Rapidity Distribution ", 1000, minRange, maxRange);
+    // TH1D *hist3 = new TH1D("hist3", "vm Rapidity Distribution ", 1000, minRange,maxRange);
+
+    // TH1D *Eta1 = new TH1D("Eta1", "vm PseudoRapidity Distribution ", 1000,  -15,15);
+    // TH1D *Eta2 = new TH1D("Eta2", "vm PseudoRapidity Distribution ", 1000, -15,15);
+    // TH1D *Eta3 = new TH1D("Eta3", "vm PseudoRapidity Distribution ", 1000, -15,15);
+
+    // TH1D *E1 = new TH1D("E1", "vm Energy ", 1000, 0 ,300);
+    // TH1D *E2 = new TH1D("E2", "vm Energy ", 1000, 0, 300);
+    // TH1D *E3 = new TH1D("E3", "vm Energy ", 1000, 0, 300);
+
+    // for (Int_t i; i<onon.size();i++) {
+        
+    //     // bc->GetEntry(on[i]);
+
+    //     hist1->Fill(onon[i]);
+    //     Eta1->Fill(ononEta[i]);
+    //     E1->Fill(ononE[i]);
+
+    // }
+    // for (Int_t i; i<onXn.size();i++) {
+        
+    //     // bc->GetEntry(ln[i]);
+        
+    //     hist2->Fill(onXn[i]);
+    //     Eta2->Fill(onXnEta[i]);
+    //     E2->Fill(onXnE[i]);
+    // }
+    
+    // for (Int_t i; i<XnXn.size();i++) {
+
+    //     // bc->GetEntry(Xn[i]);
+
+    //     hist3->Fill(XnXn[i]);
+    //     Eta3->Fill(XnXnEta[i]);
+    //     E3->Fill(XnXnE[i]);
+    // }
+
+//     // Create histograms for cross-section distribution
+//     TH1D *XS1 = new TH1D("XS1", "Cros-Section", 1000, minRange, maxRange);
+//     TH1D *XS2 = new TH1D("XS2", "Cros-Section", 1000, minRange,maxRange);
+//     TH1D *XS3 = new TH1D("XS3", "Cros-Section", 1000, minRange,maxRange);
+//     TH1D *XST = new TH1D("XST", "Cros-Section", 1000, minRange,maxRange);
+
+//     for(Int_t entry = 0; entry<1000; entry++)
+//     {
+//         XS1->SetBinContent(entry,(hist1->GetBinContent(entry)) * 523 * 1000 /100000);
+//         XS2->SetBinContent(entry,(hist2->GetBinContent(entry)) * 523 * 1000 /100000);
+//         XS3->SetBinContent(entry,(hist3->GetBinContent(entry)) * 523 * 1000 /100000);
+//         XST->SetBinContent(entry,XS1->GetBinContent(entry)+XS2->GetBinContent(entry)+XS3->GetBinContent(entry));
+//     }
+    
+//     /**
+//      * Plotting and Saving as png
+//     */
+//     // DrawXSection(XS1,XS2,XS3,XST);
+//     // DrawEnergy(E1,E2,E3);
+    // DrawPseudo(Eta1,Eta2,Eta3);
+
+//     /**
+//      * Plotting and Saving as png
+//     */
+
+//----------------------------------------------------------------------------------------------------------
+
+//     /**
+//      * 
+//      * Neutron Data in the following histograms
+//      * 
+//     */
+
+    //    TH1D *NeutronE1 = new TH1D("NeutronE1","Neutron energy",1000,0,5);
+   TH1D *NeutronE2 = new TH1D("NeutronE2","Neutron energy",10000,0,5000);
+   TH1D *NeutronE3 = new TH1D("NeutronE3","Neutron energy",10000,0,5000);
    
-    //    TH1D *NeutronEta0n = new TH1D("NeutronEta1", "Neutron Pseudo Rapidity",1000,-10,10);
-    TH1D *NeutronEtaln = new TH1D("NeutronEta2", "Neutron Pseudo Rapidity",1000,-25,25);
-    TH1D *NeutronEtaXn = new TH1D("NeutronEta3", "Neutron Pseudo Rapidity",1000,-25,25);
+    //    TH1D *NeutronEta1 = new TH1D("NeutronEta1", "Neutron Pseudo Rapidity",1000,-10,10);
+   TH1D *NeutronEta2 = new TH1D("NeutronEta2", "Neutron Pseudo Rapidity",1000,-25,25);
+   TH1D *NeutronEta3 = new TH1D("NeutronEta3", "Neutron Pseudo Rapidity",1000,-25,25);
 
-    //    TH1D *NeutronYXn = new TH1D("NeutronY1","Neutron Rapidity",1000,-6,6);
-    TH1D *NeutronYln = new TH1D("NeutronY2","Neutron Rapidity",1000,-25,25);
-    TH1D *NeutronYXn = new TH1D("NeutronY3","Neutron Rapidity",1000,-25,25);
-
-
-    // Filling the hostograms
-    for(Int_t i=0; i<lnNeutronE.size(); i++)
-    {
-        NeutronEln->Fill(lnNeutronE[i]);
-        NeutronEtaln->Fill(lnNeutronEta[i]);
-        NeutronYln->Fill(lnNeutronY[i]);
-    }
-
-    for(Int_t i=0; i<XnNeutronE.size(); i++)
-    {
-        NeutronEXn->Fill(XnNeutronE[i]);
-        NeutronEtaXn->Fill(XnNeutronEta[i]);
-        NeutronYXn->Fill(XnNeutronY[i]);
-    }
-
-    // Plotting tthe Neutron energies
-    DrawNeutronEnergy(NeutronEln,NeutronEXn);
-
-    // printing number of neutrons in each class of events 
-    std::cout<<"Number of Neutrons in onon: "<<onNeutronE.size()<<std::endl;
-    std::cout<<"Number of Neutrons in onxn: "<<lnNeutronE.size()<<std::endl;
-    std::cout<<"Number of Neutrons in xnxn: "<<XnNeutronE.size()<<std::endl;
+    //    TH1D *NeutronY1 = new TH1D("NeutronY1","Neutron Rapidity",1000,-6,6);
+   TH1D *NeutronY2 = new TH1D("NeutronY2","Neutron Rapidity",1000,-25,25);
+   TH1D *NeutronY3 = new TH1D("NeutronY3","Neutron Rapidity",1000,-25,25);
 
 
-    TH1D *TotE = new TH1D("TotE","Total Neutron Energy in each Event",1000,0,30000);
+   for(Int_t i=0; i<lnNeutronE.size(); i++)
+   {
+    NeutronE2->Fill(lnNeutronE[i]);
+    NeutronEta2->Fill(lnNeutronEta[i]);
+    NeutronY2->Fill(lnNeutronY[i]);
+   }
 
-    for(Int_t i=0; i<NeutronTotE.size();i++)
-    {
-        TotE->Fill(NeutronTotE[i]);
-    }
-
-    DrawTotNeutronEnergy(TotE);
-
-
-    // vector meson kinematic histograms
+   for(Int_t i=0; i<XnNeutronE.size(); i++)
+   {
+    NeutronE3->Fill(XnNeutronE[i]);
+    NeutronEta3->Fill(XnNeutronEta[i]);
+    NeutronY3->Fill(XnNeutronY[i]);
+   }
 
     /**
-     * The convention is  1 for onon class of events; 2 for onXn class of events; 3 for XnXn class of events; T for total
-     */
-
-    Double_t minRange = -6; // for rapidity values
-    Double_t maxRange = 6;
-    // Create histograms for each rapidity list
-    TH1D *hist1 = new TH1D("hist1", "vm Rapidity Distribution ", 1000, minRange,maxRange);
-    TH1D *hist2 = new TH1D("hist2", "vm Rapidity Distribution ", 1000, minRange, maxRange);
-    TH1D *hist3 = new TH1D("hist3", "vm Rapidity Distribution ", 1000, minRange,maxRange);
-    
-    // Histogram for pseudo rapidity 
-    TH1D *Eta1 = new TH1D("Eta1", "vm PseudoRapidity Distribution ", 1000,  -15,15);
-    TH1D *Eta2 = new TH1D("Eta2", "vm PseudoRapidity Distribution ", 1000, -15,15);
-    TH1D *Eta3 = new TH1D("Eta3", "vm PseudoRapidity Distribution ", 1000, -15,15);
-
-    // Histogram for energy
-    TH1D *E1 = new TH1D("E1", "vm Energy ", 1000, 0 ,300);
-    TH1D *E2 = new TH1D("E2", "vm Energy ", 1000, 0, 300);
-    TH1D *E3 = new TH1D("E3", "vm Energy ", 1000, 0, 300);
-
-
-    // filling in the histograms with kinematic data
-    
-    for (Int_t i; i<onon.size();i++) {
-        
-        // bc->GetEntry(on[i]);
-
-        hist1->Fill(onon[i]);
-        Eta1->Fill(ononEta[i]);
-        E1->Fill(ononE[i]);
-
-    }
-
-    for (Int_t i; i<onXn.size();i++) {
-        
-        // bc->GetEntry(ln[i]);
-        
-        hist2->Fill(onXn[i]);
-        Eta2->Fill(onXnEta[i]);
-        E2->Fill(onXnE[i]);
-    }
-    
-    for (Int_t i; i<XnXn.size();i++) {
-
-        // bc->GetEntry(Xn[i]);
-
-        hist3->Fill(XnXn[i]);
-        Eta3->Fill(XnXnEta[i]);
-        E3->Fill(XnXnE[i]);
-    }
-
-    // Create histograms for cross-section distribution
-    TH1D *XS1 = new TH1D("XS1", "Cros-Section", 1000, minRange, maxRange);
-    TH1D *XS2 = new TH1D("XS2", "Cros-Section", 1000, minRange,maxRange);
-    TH1D *XS3 = new TH1D("XS3", "Cros-Section", 1000, minRange,maxRange);
-    TH1D *XST = new TH1D("XST", "Cros-Section", 1000, minRange,maxRange);
-
-    // Filling in the cross section data for different class of events
-    for(Int_t entry = 0; entry<1000; entry++)
-    {
-        XS1->SetBinContent(entry,(hist1->GetBinContent(entry)) * 523 * 1000 /100000);
-        XS2->SetBinContent(entry,(hist2->GetBinContent(entry)) * 523 * 1000 /100000);
-        XS3->SetBinContent(entry,(hist3->GetBinContent(entry)) * 523 * 1000 /100000);
-        XST->SetBinContent(entry,XS1->GetBinContent(entry)+XS2->GetBinContent(entry)+XS3->GetBinContent(entry));
-    }
-    
-    /**
-     * Plotting and Saving as png
+     * Plotting the graphs and saving as png file
     */
-    DrawXSection(XS1,XS2,XS3,XST);
-    DrawEnergy(E1,E2,E3);
-    DrawPseudoRapidity(Eta1,Eta2,Eta3);
-
-    /**
-     * Plotting and Saving as png
+//    DrawNY(NeutronY2,NeutronY3);
+//    DrawNEta(NeutronEta2,NeutronEta3);
+   DrawNE(NeutronE2,NeutronE3);
+   /**
+    *  End of Plotting
     */
+   
+//-------------------------------------------------------------------------------------------------------------------------------
+
+   std::cout<<"Number of Neutrons in onon: "<<onNeutronE.size()<<std::endl;
+   std::cout<<"Number of Neutrons in onxn: "<<lnNeutronE.size()<<std::endl;
+   std::cout<<"Number of Neutrons in xnxn: "<<XnNeutronE.size()<<std::endl;
+
+
+
+  TH1D *TotE = new TH1D("TotE","Total Neutron Energy in each Event",1000,0,30000);
+//   TH1D *TotEL = new TH1D("ThotEL","Log scale of Neutron Energy per Event", 1000,0,10000);
+
+  for(Int_t i=0; i<NeutronTotE.size();i++)
+  {
+    TotE->Fill(NeutronTotE[i]);
+  }
+//   for(Int_t i=0; i<100;i++)
+//   {
+//     TotEL->SetBinContent(i,TMath::Log10(TotE->GetBinContent(i)));
+//   }
+
+  DrawTotNE(TotE);
+// // //-------------------------------------------------------------------------------------------------------
+    // TH1D *VmB = new TH1D("VmB","Boosted Vectormeson energy",100,0,5000);
+    // TH1D *VmBL = new TH1D("VmBLog","Log scale",100,0,5000);
+    // for(Int_t i=0; i<VmBoostE.size();i++)
+    // {
+    //     VmB->Fill(VmBoostE[i]);
+    // }
+    // for(Int_t i=0; i<1000;i++)
+    // {
+    //     VmBL->SetBinContent(i,TMath::Log10(VmB->GetBinContent(i)));   
+    // } 
+
+    // DrawTotNE(VmBL);
+
 }
 
 
-
-// Definitions for different fucntions
-
 /**
- * The genral structure of plot is 
- * create a canvas
- * set X and Y axis ranges 
- * then draw
- * Additionally we created .png files of the canvas
- */
+ * 
+ * 
+ * The Following functions are for ploting the data
+ * 
+ * 
+*/
 
-void DrawTotNeutronEnergy(TH1D *TotE)
+void DrawTotNE(TH1D *TotE)
 {
     TCanvas *c7 = new TCanvas("c7","TOtal Neutron Energy per Event side 1",1200,800);
 
@@ -405,7 +377,7 @@ void DrawTotNeutronEnergy(TH1D *TotE)
     c7->SaveAs("Total_Neutron_E_2.76_side2_ss.png");
 }
 
-void DrawNeutronRapidity( TH1D* NeutronY2, TH1D* NeutronY3)
+void DrawNY( TH1D* NeutronY2, TH1D* NeutronY3)
 {
     TCanvas *c4 = new TCanvas("c4", "Cross-section Plot", 1200, 800);
 
@@ -433,7 +405,7 @@ void DrawNeutronRapidity( TH1D* NeutronY2, TH1D* NeutronY3)
     c4->SaveAs("Neutron_Rapidity_Boosted_2.76.png");
 }
 
-void DrawNeutronPseudorapidity( TH1D* NeutronEta2, TH1D* NeutronEta3)
+void DrawNEta( TH1D* NeutronEta2, TH1D* NeutronEta3)
 {
     TCanvas *c5 = new TCanvas("c5", "Cross-section Plot", 1200, 800);
 
@@ -462,7 +434,7 @@ void DrawNeutronPseudorapidity( TH1D* NeutronEta2, TH1D* NeutronEta3)
 }
 
 
-void DrawNeutronEnergy( TH1D* NeutronE2, TH1D* NeutronE3)
+void DrawNE( TH1D* NeutronE2, TH1D* NeutronE3)
 {
     TCanvas *c6 = new TCanvas("c6", "Cross-section Plot", 1200, 800);
 
@@ -581,7 +553,7 @@ void DrawEnergy(TH1D* E1, TH1D* E2, TH1D* E3)
 
 }
 
-void DrawPseudoRapidity(TH1D* Eta1,TH1D* Eta2,TH1D* Eta3)
+void DrawPseudo(TH1D* Eta1,TH1D* Eta2,TH1D* Eta3)
 {
     TCanvas *c2 = new TCanvas("c2", "Pseudo Rapidity", 1200, 800);
 
@@ -613,3 +585,5 @@ void DrawPseudoRapidity(TH1D* Eta1,TH1D* Eta2,TH1D* Eta3)
     c2->Draw();
     c2->SaveAs("Pseudo_rapidity_Boosted_2.76.png");
 }
+
+
