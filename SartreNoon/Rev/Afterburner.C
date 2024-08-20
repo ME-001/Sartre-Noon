@@ -84,7 +84,7 @@ void Afterburner()
      * Creating a TTree file and acessing the root objects fromt he example_Pb.root file 
      * Mind that both the Afterburner and the example_Pb.root files should be in the same location
     */
-    TFile *file = new TFile("example_Pb.root","READ");
+    TFile *file = new TFile("example_Pb.root","READ");              // The root file name should be "example_Pd.root" if not please change it here
 
     TTree *tree = dynamic_cast<TTree*>(file->Get("tree"));
 
