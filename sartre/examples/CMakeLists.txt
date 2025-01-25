@@ -82,6 +82,16 @@ if (OPENGL_FOUND)
    set(LIBS ${LIBS} ${OPENGL_LIBRARIES})
 endif()
 
+add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/hENDF.root
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/hENDF.root ${CMAKE_BINARY_DIR}/hENDF.root
+    DEPENDS ${CMAKE_SOURCE_DIR}/hENDF.root
+    COMMENT "Copying hENDF.root to build directory"
+)
+
+# Create a custom target to invoke the copy command
+add_custom_target(copy_hendf ALL DEPENDS ${CMAKE_BINARY_DIR}/hENDF.root)
+
 #
 #  Built all programs in example directory
 #
@@ -96,6 +106,8 @@ add_executable(convergenceTest convergenceTest.cpp)
 #if (OPENGL_FOUND AND GLUT_FOUND)
 #    add_executable(nucleusAnimation nucleusAnimation.cpp)
 #endif()    
+
+
 
 #
 #  Make sure the files to search for external libraries are available

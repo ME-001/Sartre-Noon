@@ -270,8 +270,8 @@ int main(int argc, char *argv[])
         myRootSartreEvent.xpom  = event->xpom;
         myRootSartreEvent.pol   = event->polarization == transverse ? 0 : 1;
         myRootSartreEvent.dmode = event->diffractiveMode == coherent ? 0 : 1;
-        // myRootSartreEvent.nBeam1 = 0;
-        // myRootSartreEvent.nBeam2 = 0;
+        myRootSartreEvent.nBeam1 = 0;
+        myRootSartreEvent.nBeam2 = 0;
         *eIn     = event->particles[0].p;
         *pIn     = event->particles[1].p;
         *eOut    = event->particles[2].p;
@@ -403,6 +403,11 @@ int main(int argc, char *argv[])
 		            new (neutrons2[neutrons2.GetEntriesFast()]) TLorentzVector(particle.p);
                 }
 	        }
+	       
+	    if (iEvent == maxEvents - 1) {
+            	gg.clear();  // Clear the vector of pointers
+            	hfile->cd();
+        	}
 	    }
 	
 
@@ -443,9 +448,7 @@ int main(int argc, char *argv[])
         //  Fill and write event to file
         //
         tree.Fill();
-        if (iEvent == maxEvents - 1) {
-            gg.clear();  // Clear the vector of pointers
-        }
+        
         
         
         #if defined(EIC_SMEAR_OUTPUT)
@@ -458,7 +461,7 @@ int main(int argc, char *argv[])
     //
     //  That's it, finish up
     //
-    hfile->cd();
+    
     double totalCS=sartre.totalCrossSection();
     TH1D* histoForCSandNumberOfEvents = new TH1D("histoForCSandNumberOfEvents", "Cross-section and Number of Events", 2, 0., 1.);
     histoForCSandNumberOfEvents->SetBinContent(1, totalCS);
