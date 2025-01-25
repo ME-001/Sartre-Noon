@@ -1,1 +1,0 @@
-cmd='/home/bhakta/sartre/sartreinstall/cuba/configure;--prefix=/home/bhakta/sartre/sartreinstall/cuba/build'
