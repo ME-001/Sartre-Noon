@@ -1,4 +1,4 @@
-# Install script for directory: /home/bhakta/sartreEnv/sartre/examples
+# Install script for directory: /home/bhakta/Sartre-Noon/sartre/examples
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/bhakta/SartreTest/sartre/examples/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/bhakta/Sartre-Noon/sartre/examples/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/bhakta/sartreEnv/sartre/examples
+CMAKE_SOURCE_DIR = /home/bhakta/Sartre-Noon/sartre/examples
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/bhakta/SartreTest/sartre/examples
+CMAKE_BINARY_DIR = /home/bhakta/Sartre-Noon/sartre/examples
 
 # Include any dependencies generated for this target.
 include CMakeFiles/sartreTest.dir/depend.make
@@ -70,18 +70,18 @@ include CMakeFiles/sartreTest.dir/progress.make
 include CMakeFiles/sartreTest.dir/flags.make
 
 CMakeFiles/sartreTest.dir/sartreTest.cpp.o: CMakeFiles/sartreTest.dir/flags.make
-CMakeFiles/sartreTest.dir/sartreTest.cpp.o: /home/bhakta/sartreEnv/sartre/examples/sartreTest.cpp
+CMakeFiles/sartreTest.dir/sartreTest.cpp.o: sartreTest.cpp
 CMakeFiles/sartreTest.dir/sartreTest.cpp.o: CMakeFiles/sartreTest.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/bhakta/SartreTest/sartre/examples/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/sartreTest.dir/sartreTest.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sartreTest.dir/sartreTest.cpp.o -MF CMakeFiles/sartreTest.dir/sartreTest.cpp.o.d -o CMakeFiles/sartreTest.dir/sartreTest.cpp.o -c /home/bhakta/sartreEnv/sartre/examples/sartreTest.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/bhakta/Sartre-Noon/sartre/examples/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/sartreTest.dir/sartreTest.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sartreTest.dir/sartreTest.cpp.o -MF CMakeFiles/sartreTest.dir/sartreTest.cpp.o.d -o CMakeFiles/sartreTest.dir/sartreTest.cpp.o -c /home/bhakta/Sartre-Noon/sartre/examples/sartreTest.cpp
 
 CMakeFiles/sartreTest.dir/sartreTest.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/sartreTest.dir/sartreTest.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/bhakta/sartreEnv/sartre/examples/sartreTest.cpp > CMakeFiles/sartreTest.dir/sartreTest.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/bhakta/Sartre-Noon/sartre/examples/sartreTest.cpp > CMakeFiles/sartreTest.dir/sartreTest.cpp.i
 
 CMakeFiles/sartreTest.dir/sartreTest.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/sartreTest.dir/sartreTest.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/bhakta/sartreEnv/sartre/examples/sartreTest.cpp -o CMakeFiles/sartreTest.dir/sartreTest.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/bhakta/Sartre-Noon/sartre/examples/sartreTest.cpp -o CMakeFiles/sartreTest.dir/sartreTest.cpp.s
 
 # Object files for target sartreTest
 sartreTest_OBJECTS = \
@@ -92,24 +92,24 @@ sartreTest_EXTERNAL_OBJECTS =
 
 sartreTest: CMakeFiles/sartreTest.dir/sartreTest.cpp.o
 sartreTest: CMakeFiles/sartreTest.dir/build.make
-sartreTest: /home/bhakta/SartreTest/sartrei/sartre/lib/libcuba.a
-sartreTest: /home/bhakta/SartreTest/sartrei/sartre/lib/libgemini.a
-sartreTest: /home/bhakta/SartreTest/sartrei/sartre/lib/libnoon.a
-sartreTest: /home/bhakta/SartreTest/sartrei/sartre/lib/libsartre.a
-sartreTest: /home/bhakta/SartreTest/sartrei/sartre/lib/libcuba.a
-sartreTest: /home/bhakta/SartreTest/sartrei/sartre/lib/libgemini.a
-sartreTest: /home/bhakta/SartreTest/sartrei/sartre/lib/libnoon.a
-sartreTest: /home/bhakta/SartreTest/sartrei/sartre/lib/libsartre.a
+sartreTest: /home/bhakta/Sartre-Noon/sartrei/sartre/lib/libcuba.a
+sartreTest: /home/bhakta/Sartre-Noon/sartrei/sartre/lib/libgemini.a
+sartreTest: /home/bhakta/Sartre-Noon/sartrei/sartre/lib/libnoon.a
+sartreTest: /home/bhakta/Sartre-Noon/sartrei/sartre/lib/libsartre.a
+sartreTest: /home/bhakta/Sartre-Noon/sartrei/sartre/lib/libcuba.a
+sartreTest: /home/bhakta/Sartre-Noon/sartrei/sartre/lib/libgemini.a
+sartreTest: /home/bhakta/Sartre-Noon/sartrei/sartre/lib/libnoon.a
+sartreTest: /home/bhakta/Sartre-Noon/sartrei/sartre/lib/libsartre.a
 sartreTest: /usr/lib/x86_64-linux-gnu/libGL.so
 sartreTest: /usr/lib/x86_64-linux-gnu/libGLU.so
-sartreTest: /home/bhakta/SartreTest/sartrei/sartre/lib/libcuba.a
-sartreTest: /home/bhakta/SartreTest/sartrei/sartre/lib/libgemini.a
-sartreTest: /home/bhakta/SartreTest/sartrei/sartre/lib/libnoon.a
-sartreTest: /home/bhakta/SartreTest/sartrei/sartre/lib/libsartre.a
+sartreTest: /home/bhakta/Sartre-Noon/sartrei/sartre/lib/libcuba.a
+sartreTest: /home/bhakta/Sartre-Noon/sartrei/sartre/lib/libgemini.a
+sartreTest: /home/bhakta/Sartre-Noon/sartrei/sartre/lib/libnoon.a
+sartreTest: /home/bhakta/Sartre-Noon/sartrei/sartre/lib/libsartre.a
 sartreTest: /usr/lib/x86_64-linux-gnu/libGL.so
 sartreTest: /usr/lib/x86_64-linux-gnu/libGLU.so
 sartreTest: CMakeFiles/sartreTest.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/bhakta/SartreTest/sartre/examples/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable sartreTest"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/bhakta/Sartre-Noon/sartre/examples/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable sartreTest"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/sartreTest.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -121,6 +121,6 @@ CMakeFiles/sartreTest.dir/clean:
 .PHONY : CMakeFiles/sartreTest.dir/clean
 
 CMakeFiles/sartreTest.dir/depend:
-	cd /home/bhakta/SartreTest/sartre/examples && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/bhakta/sartreEnv/sartre/examples /home/bhakta/sartreEnv/sartre/examples /home/bhakta/SartreTest/sartre/examples /home/bhakta/SartreTest/sartre/examples /home/bhakta/SartreTest/sartre/examples/CMakeFiles/sartreTest.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/bhakta/Sartre-Noon/sartre/examples && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/bhakta/Sartre-Noon/sartre/examples /home/bhakta/Sartre-Noon/sartre/examples /home/bhakta/Sartre-Noon/sartre/examples /home/bhakta/Sartre-Noon/sartre/examples /home/bhakta/Sartre-Noon/sartre/examples/CMakeFiles/sartreTest.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/sartreTest.dir/depend
 

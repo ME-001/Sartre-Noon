@@ -138,14 +138,14 @@ int main(int argc, char *argv[])
     //  Derive filename for eic smear compatible output
     //  from root file
     //
-#if defined(EIC_SMEAR_OUTPUT)
+    #if defined(EIC_SMEAR_OUTPUT)
     string eicSmearFilename;
     eicSmearFilename = rootfile.substr(0, rootfile.find(".root"));
     eicSmearFilename += ".out";
     EicSmearFormatWriter eicSmearWriter;
     eicSmearWriter.open(eicSmearFilename, settings->enableNuclearBreakup());
     cout << "eic-smear compatible output file is '" <<  eicSmearFilename.c_str() << "'." << endl;
-#endif
+    #endif
 
     //
     //  Setup ROOT tree
@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
     TClonesArray neutrons2("TLorentzVector");
     
     TTree tree("tree","sartre");
-    tree.Branch("event", &myRootSartreEvent.nBeam1,
+    tree.Branch("event", &myRootSartreEvent.t,
                 "t/D:Q2/D:x/D:s/D:y/D:W/D:xpom/D:iEvent/I:pol/I:dmode/I:nBeam1/I:nBeam2/I");
     tree.Branch("eIn",  "TLorentzVector", &eIn, 32000, 0);
     tree.Branch("pIn",  "TLorentzVector", &pIn, 32000, 0);
@@ -176,11 +176,10 @@ int main(int argc, char *argv[])
     tree.Branch("gamma","TLorentzVector", &gamma, 32000, 0);
     tree.Branch("vmDaughter1", "TLorentzVector", &vmDaughter1, 32000, 0);
     tree.Branch("vmDaughter2", "TLorentzVector", &vmDaughter2, 32000, 0);
-    if(settings->UPC() and settings->A()==settings->UPCA())
-    {
+    if(settings->UPC() and settings->A()==settings->UPCA()){
     	tree.Branch("neutrons1", &neutrons1);
     	tree.Branch("neutrons2",&neutrons2);
-    	tree.Branch("Neutron_number",&myRootSartreEvent.nBeam1, "nBeam1/I:nBeam2/I")
+    	//tree.Branch("Neutron_number",&myRootSartreEvent.nBeam1, "nBeam1/I:nBeam2/I");
     	
     }
 
@@ -220,11 +219,12 @@ int main(int argc, char *argv[])
     //  Events and how often to show status
     //
     int nPrint;
-    if (settings->timesToShow())
+    if (settings->timesToShow()){
         nPrint = settings->numberOfEvents()/settings->timesToShow();
-    else
+    }
+    else{
         nPrint = 0;
-    
+    }
     unsigned long maxEvents = settings->numberOfEvents();
     
     cout << "Generating " << maxEvents << " events." << endl << endl;
@@ -270,8 +270,8 @@ int main(int argc, char *argv[])
         myRootSartreEvent.xpom  = event->xpom;
         myRootSartreEvent.pol   = event->polarization == transverse ? 0 : 1;
         myRootSartreEvent.dmode = event->diffractiveMode == coherent ? 0 : 1;
-        myRootSartreEvent.nBeam1 = 0;
-        myRootSartreEvent.nBeam2 = 0;
+        // myRootSartreEvent.nBeam1 = 0;
+        // myRootSartreEvent.nBeam2 = 0;
         *eIn     = event->particles[0].p;
         *pIn     = event->particles[1].p;
         *eOut    = event->particles[2].p;
@@ -338,74 +338,72 @@ int main(int argc, char *argv[])
         
         
         if(settings->UPC() and settings->A()==settings->UPCA()){ // this is to ensure that this part of the code run only for UPC
-       //loading the Neutron generator only once 
-        if(iEvent < 1)
-        {
+            //loading the Neutron generator only once 
+            if(iEvent < 1){
         	
-        	NeutronGenerator * gen = new NeutronGenerator(eIn->Gamma());
-        	//gen->SetStoreQA();                                                  // Set kStoreQA = True; 
-    		//gen->SetStoreGeneratorFunctions();                                  // Store generator functions
-    		gen->SetHadronicInteractionModel(NeutronGenerator::kGlauber);       // Selects model for ion interaction
-    		gen->Initialize();                                                  // Loads default data (photon flux, cross-section, etc.)
-    		gen->SetRunMode(NeutronGenerator::kInterface);                      // Run mode = kInterface for plain neutron generation
-    		//gen->ReadENDF(kTRUE); // By Default True in new file.               // Enables reading of ENDF data tables
-    		gen->LoadENDF("hENDF.root");   // Need modification of this file.   // Data table for energy distribution among created neutrons
-    		//gen->Setup(); 
+        	    NeutronGenerator * gen = new NeutronGenerator(eIn->Gamma());
+        	    //gen->SetStoreQA();                                                  // Set kStoreQA = True; 
+    		    //gen->SetStoreGeneratorFunctions();                                  // Store generator functions
+    		    gen->SetHadronicInteractionModel(NeutronGenerator::kGlauber);       // Selects model for ion interaction
+    		    gen->Initialize();                                                  // Loads default data (photon flux, cross-section, etc.)
+    		    gen->SetRunMode(NeutronGenerator::kInterface);                      // Run mode = kInterface for plain neutron generation
+    		    //gen->ReadENDF(kTRUE); // By Default True in new file.               // Enables reading of ENDF data tables
+    		    gen->LoadENDF("hENDF.root");   // Need modification of this file.   // Data table for energy distribution among created neutrons
+    		    //gen->Setup(); 
     		
-    		gg.push_back(gen);	
-        }
+    		    gg.push_back(gen);	
+            }
         
-        neutrons1.Clear();
-        neutrons2.Clear();
+            neutrons1.Clear();
+            neutrons2.Clear();
         
-        Double_t y = vm->Rapidity();                                   // Store the rapidity corresponding to that entry
-        //Double_t eta = vm->Eta();                                      // Store the pseudo rapidity corresponding to that entry
+            Double_t y = vm->Rapidity();                                   // Store the rapidity corresponding to that entry
+            //Double_t eta = vm->Eta();                                      // Store the pseudo rapidity corresponding to that entry
 
-        Double_t k = 0.5 * vm->M() * TMath::Exp(TMath::Abs(y));        // Calculate photon energy for vm production
+            Double_t k = 0.5 * vm->M() * TMath::Exp(TMath::Abs(y));        // Calculate photon energy for vm production
 
-        vector<Int_k> nNumbers = gg[0]->runSartreNoon(k);              // Gives the number of neutrons in both beams
+            vector<Int_t> nNumbers = gg[0]->runSartreNoon(k);              // Gives the number of neutrons in both beams
         	
-        event->particles.resize(7+nNumbers[0]+nNumbers[1]);            // resizing particle number
+            event->particles.resize(7+nNumbers[0]+nNumbers[1]);            // resizing particle number
         
-        //cout<<nNumbers[0]<<" "<<nNumbers[1]<<endl;
+            //cout<<nNumbers[0]<<" "<<nNumbers[1]<<endl;
         
-        //
-        // Newly added code for storing neutron nombers in the event tree
-        //
+            //
+            // Newly added code for storing neutron nombers in the event tree
+            //
        
-         myRootSartreEvent.nBeam1  = nNumbers[0];
-         myRootSartreEvent.nBeam2  = nNumbers[1];
+            myRootSartreEvent.nBeam1  = nNumbers[0];
+            myRootSartreEvent.nBeam2  = nNumbers[1];
         
         
         
-        if(nNumbers[0]!=0) 
-        {	
+            if(nNumbers[0]!=0) {	
                 vector<TLorentzVector> V; 
-        	gg[0]->neutronRecord(nNumbers[0], nNumbers[1], 0,V);
-        	for(Int_t x =0; x<nNumbers[0]; x++){
-	        	Particle& particle = event->particles[7+x];
-        		TLorentzVector* neutron1 = &V[x];
-        		particle.p = *neutron1;
-        		particle.pdgId = 2112;
-        		particle.parents = {0};
-        		particle.status =1;
-			new (neutrons1[neutrons1.GetEntriesFast()]) TLorentzVector(particle.p);
-		}
-	}
-        if(nNumbers[1]!=0)
-        {	
-        	vector<TLorentzVector> V; 
-        	gg[0]->neutronRecord(nNumbers[0], nNumbers[1], 1,V);
-        	for(Int_t x = 0;x<nNumbers[1];x++){
-        	Particle& particle = event->particles[7+nNumbers[0]+x];
-        	TLorentzVector* neutron2= &V[x];
-        	particle.p = *neutron2;
-        	particle.pdgId = 2112;
-        	particle.parents = {1};
-        	particle.status =1;
-		new (neutrons2[neutrons2.GetEntriesFast()]) TLorentzVector(particle.p);}
-	}
-	}
+        	    gg[0]->neutronRecord(nNumbers[0], nNumbers[1], 0,V);
+        	    for(Int_t x =0; x<nNumbers[0]; x++){
+	        	    Particle& particle = event->particles[7+x];
+        		    TLorentzVector* neutron1 = &V[x];
+        		    particle.p = *neutron1;
+        		    particle.pdgId = 2112;
+        		    particle.parents = {0};
+        		    particle.status =1;
+			        new (neutrons1[neutrons1.GetEntriesFast()]) TLorentzVector(particle.p);
+		        }
+	        }
+            if(nNumbers[1]!=0){	
+        	    vector<TLorentzVector> V; 
+        	    gg[0]->neutronRecord(nNumbers[0], nNumbers[1], 1,V);
+        	    for(Int_t x = 0;x<nNumbers[1];x++){
+        	        Particle& particle = event->particles[7+nNumbers[0]+x];
+        	        TLorentzVector* neutron2= &V[x];
+        	        particle.p = *neutron2;
+        	        particle.pdgId = 2112;
+        	        particle.parents = {1};
+        	        particle.status =1;
+		            new (neutrons2[neutrons2.GetEntriesFast()]) TLorentzVector(particle.p);
+                }
+	        }
+	    }
 	
 
         //
@@ -446,23 +444,13 @@ int main(int argc, char *argv[])
         //
         tree.Fill();
         if (iEvent == maxEvents - 1) {
-    for (NeutronGenerator* gen : gg) {
-        // If the object contains graphs or other ROOT objects, remove them from the ROOT file
-        // Assuming 'gen' has graphs or other objects that need removal, call Remove on them:
-        // For each graph in gen, remove it from the ROOT file and delete it.
-                
-
-        // Remove and delete the NeutronGenerator itself
-        hfile->Remove(gen);  // Remove NeutronGenerator from the ROOT file
-        delete gen;         // Delete the NeutronGenerator object from memory
-    }
-
-    gg.clear();  // Clear the vector of pointers
-}
+            gg.clear();  // Clear the vector of pointers
+        }
         
-#if defined(EIC_SMEAR_OUTPUT)
+        
+        #if defined(EIC_SMEAR_OUTPUT)
         eicSmearWriter.writeEvent(event);
-#endif
+        #endif
     }
     tree.Write();
     cout << "All events processed\n" << endl;
@@ -470,22 +458,26 @@ int main(int argc, char *argv[])
     //
     //  That's it, finish up
     //
+    hfile->cd();
     double totalCS=sartre.totalCrossSection();
     TH1D* histoForCSandNumberOfEvents = new TH1D("histoForCSandNumberOfEvents", "Cross-section and Number of Events", 2, 0., 1.);
     histoForCSandNumberOfEvents->SetBinContent(1, totalCS);
     histoForCSandNumberOfEvents->SetBinContent(2, maxEvents);
     
     double runTime = sartre.runTime();
+    histoForCSandNumberOfEvents->Write();
     hfile->Write();
     cout << "File '" << rootfile << "' written." << endl;
-#if defined(EIC_SMEAR_OUTPUT)
+    #if defined(EIC_SMEAR_OUTPUT)
     eicSmearWriter.close();
     cout << "File '" << eicSmearWriter.filename() << "' written." << endl;
-#endif
+    #endif
     cout << "Total cross-section: " << totalCS << " nb" << endl;
     sartre.listStatus();   
     cout << "CPU Time/event: " << 1000*runTime/maxEvents << " msec/evt" << endl;   
     
+    delete histoForCSandNumberOfEvents;
+    hfile->Close();
     return 0;   
 }   
 

@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/bhakta/SartreTest/sartrei/sartre/include -I/home/bhakta/rooti/include
+CXX_INCLUDES = -I/home/bhakta/Sartre-Noon/sartrei/sartre/include -I/home/bhakta/rooti/include
 
 CXX_FLAGS =  -O -std=c++11 -W -Wall -Wextra -pedantic -Wno-long-long -std=c++17
 
