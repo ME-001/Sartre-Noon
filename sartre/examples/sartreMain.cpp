@@ -455,7 +455,7 @@ int main(int argc, char *argv[])
         eicSmearWriter.writeEvent(event);
         #endif
     }
-    tree.Write();
+    // tree.Write();
     cout << "All events processed\n" << endl;
     
     //
@@ -468,7 +468,6 @@ int main(int argc, char *argv[])
     histoForCSandNumberOfEvents->SetBinContent(2, maxEvents);
     
     double runTime = sartre.runTime();
-    histoForCSandNumberOfEvents->Write();
     hfile->Write();
     cout << "File '" << rootfile << "' written." << endl;
     #if defined(EIC_SMEAR_OUTPUT)
