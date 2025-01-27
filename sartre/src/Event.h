@@ -67,9 +67,7 @@ public:
     //  List of particles in event.        
     //  First two are always beam particles.        
     //        
-    vector<Particle> particles;  
-    int nBeam1;
-    int nBeam2;      
+    vector<Particle> particles;       
             
 public:        
     void list(ostream& = cout) const;        
