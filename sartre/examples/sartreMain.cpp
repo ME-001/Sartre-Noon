@@ -360,7 +360,7 @@ int main(int argc, char *argv[])
 
             double k = 0.5 * vm->M() * TMath::Exp(TMath::Abs(y));        // Calculate photon energy for vm production
 
-            vector<int> nNumbers = ngenVec[0]->runSartreNoon(k);              // Gives the number of neutrons in both beams
+            vector<int> nNumbers = nGenVec[0]->runSartreNoon(k);              // Gives the number of neutrons in both beams
         	
             event->particles.resize(7+nNumbers[0]+nNumbers[1]);            // resizing particle number
         

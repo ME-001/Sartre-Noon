@@ -1,0 +1,2 @@
+/usr/bin/ar qc libnoon.a CMakeFiles/noon.dir/NeutronGenerator.cxx.o
+/usr/bin/ranlib libnoon.a

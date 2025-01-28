@@ -1,0 +1,1 @@
+cmd='/home/bhakta/Sartre-Noon/sartreb/cuba/configure;--prefix=/home/bhakta/Sartre-Noon/sartreb/cuba/build'
