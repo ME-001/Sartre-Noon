@@ -6,13 +6,6 @@
 #include "TTree.h"
 #include "TClonesArray.h"
 #include <vector>
-// #include "Event.h"
-
-// struct neutronArray
-// {
-//   vector<TLorentzVector> n1Array;
-//   vector<TLorentzVector> n2Array;
-// };
 
 class NeutronGenerator 
 {
@@ -29,8 +22,8 @@ public:
     kHardSphere
   };
 
-  //NeutronGenerator();
-  NeutronGenerator(int beamgamma);
+  NeutronGenerator();
+  NeutronGenerator(int beamgamma);     // my new defined constructor
   virtual ~NeutronGenerator();
   
   void       	GenerateEvent(const Double_t photonK);
@@ -55,22 +48,19 @@ public:
   
   Double_t GetBreakupProbability(const Double_t photonK, const Int_t nNeutronsBeam1, const Int_t nNeutronsBeam2);
   Double_t GetTotalFlux(const Double_t photonK);
-
-
-
-  std::vector<Int_t> runSartreNoon(const Double_t photonk);
-  void createSartreNeutrons(const Int_t nBeam1, const Int_t nBeam2, std::vector<Double_t> &NeutronE, std::vector<Double_t> &NeutronEta, std::vector<Double_t> &NeutronY);
-  //void  neutronRecord(const Int_t nBeam1, const Int_t nBeam2, std::vector<TLorentzVector> &particles1, std::vector<TLorentzVector> &particles2);
-  void neutronRecord(const Int_t nBeam1, const Int_t nBeam2, const Int_t side, std::vector<TLorentzVector> &V);
-  
-  //void SetBeamGamma(double bm);
-  // void createSartreNeutrons(const Int_t nBeam, Int_t index, Event &event, Int_t side, TClonesArray &neutron);
-
-  // std::vector<Double_t> NeutronE;
-  // std::vector<Double_t> NeutronEta;
-  // std::vector<Double_t> NeutronY;
-  
   void ENDF(const char* txtFile);
+
+
+  //  
+  //  Our newly defined methods for neutron data extraction
+  //
+
+  // get the nuomber of neutron in both the beams
+  std::vector<Int_t> runSartreNoon(const Double_t photonk);
+  // old method used in afterburner for extracting neutron data
+  void createSartreNeutrons(const Int_t nBeam1, const Int_t nBeam2, std::vector<Double_t> &NeutronE, std::vector<Double_t> &NeutronEta, std::vector<Double_t> &NeutronY);
+  // New method for extracting neutron data in the sartre + noon integration 
+  void neutronRecord(const Int_t nBeam1, const Int_t nBeam2, const Int_t side, std::vector<TLorentzVector> &V);
 
 
   

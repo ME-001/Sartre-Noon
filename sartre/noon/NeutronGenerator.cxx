@@ -79,13 +79,6 @@ NeutronGenerator::~NeutronGenerator()
  
 }
 
-/*void NeutronGenerator::SetBeamGamma(double bm)
-{beamGamma =bm;
-gammaTarget =2.0*beamGamma*beamGamma-1.0;
-Initialize();
-ReadENDF(kTRUE);
-Setup();
-};*/
 //______________________________________________________________________________
 
 void NeutronGenerator::SetRunMode(RunMode_t mode,const char *filename, const char *name1, const char *name2)
@@ -171,7 +164,7 @@ void NeutronGenerator::FinishProduction(){
   if(fOutputFile)fOutputFile->Close();  
 }
 //______________________________________________________________________________
-void NeutronGenerator::CreateNeutrons(const Int_t nNeutronsBeam1, const Int_t nNeutronsBeam2) // need modification
+void NeutronGenerator::CreateNeutrons(const Int_t nNeutronsBeam1, const Int_t nNeutronsBeam2) 
 {
   hNeutronMultiplicity->Fill(nNeutronsBeam1,nNeutronsBeam2);
   Double_t energyKin = 0,mom = 0,phi = 0, theta = 0;
@@ -188,7 +181,7 @@ void NeutronGenerator::CreateNeutrons(const Int_t nNeutronsBeam1, const Int_t nN
     if(nNeutrons[side] == 0)continue;
 
     if(nNeutrons[side] <= 10){
-      energyPhoton = hSection_Nn[nNeutrons[side]-1].GetRandom(); //hSection_Nn what is this??
+      energyPhoton = hSection_Nn[nNeutrons[side]-1].GetRandom(); 
       energyBin = hENDF_2D->GetXaxis()->FindBin(energyPhoton);
       if(energyPhoton>140) energyBin--;
       hENDF_1D = hENDF_2D->ProjectionY("hENDF_1D",energyBin,energyBin);
@@ -219,27 +212,29 @@ void NeutronGenerator::CreateNeutrons(const Int_t nNeutronsBeam1, const Int_t nN
       hPhiBoosted->Fill(vec.Phi());
       hThetaBoosted->Fill(vec.Theta());
 
-      //TParticle units are GeV, up to now we were in MeV
-      //TParticle *part = (TParticle*) fParticles->ConstructedAt(nGenerated++);
-      //part->SetMomentum(vec.Px()*0.001, vec.Py()*0.001, vec.Pz()*0.001, vec.Energy()*0.001); //GeV convesion
-      //part->SetPdgCode(2112);
-      //part->SetStatusCode(1);
-      //part->SetProductionVertex(0,0,0,0);
-      //part->SetMother(0,-1);
-      //part->SetMother(1,-1);
-      //part->SetDaughter(0,-1);
-      //part->SetDaughter(1,-1);
+      // TParticle units are GeV, up to now we were in MeV
+      TParticle *part = (TParticle*) fParticles->ConstructedAt(nGenerated++);
+      part->SetMomentum(vec.Px()*0.001, vec.Py()*0.001, vec.Pz()*0.001, vec.Energy()*0.001); //GeV convesion
+      part->SetPdgCode(2112);
+      part->SetStatusCode(1);
+      part->SetProductionVertex(0,0,0,0);
+      part->SetMother(0,-1);
+      part->SetMother(1,-1);
+      part->SetDaughter(0,-1);
+      part->SetDaughter(1,-1);
       
-      //hNeutronRapidity->Fill(part->Y());
-      //hNeutronEta->Fill(part->Eta());
+      hNeutronRapidity->Fill(part->Y());
+      hNeutronEta->Fill(part->Eta());
       }
     }
 }
 //==========================================================================================================================
 /**
- * Our methods runSartreNoon and createSartreNeutrons
+ * Our methods runSartreNoon and createSartreNeutrons and neutronRecord
  * runSartreNoon is modified version of generateEvent
- * createSartreNoon is modified version of CreateNeutrons  */ 
+ * createSartreNoon is modified version of CreateNeutrons
+ * neutronrecord is modified version of createSartreNoon used in the fully integrated sartre
+ */ 
 //=======================================================================================================================
 std::vector<int> NeutronGenerator::runSartreNoon(const Double_t photonK) 
 {
@@ -263,8 +258,6 @@ std::vector<int> NeutronGenerator::runSartreNoon(const Double_t photonK)
 
   if(nNeutronsBeam1 != nNeutronsBeam2 && gRandom->Rndm()<0.5){result.push_back(nNeutronsBeam1);result.push_back(nNeutronsBeam2);}
   else{result.push_back(nNeutronsBeam2);result.push_back(nNeutronsBeam1);}
-
-  //hNeutronMultiplicity->Fill(result[0],result[1]);
 
   return result;
 
@@ -324,63 +317,48 @@ void NeutronGenerator::createSartreNeutrons(const Int_t nBeam1, const Int_t nBea
 //
 void NeutronGenerator::neutronRecord(const Int_t nBeam1, const Int_t nBeam2, const Int_t side, std::vector<TLorentzVector> &V)
 {
-	//hNeutronMultiplicity->Fill(nBeam1,nBeam2);
-  	Double_t energyKin = 0,mom = 0,phi = 0, theta = 0;
+	// hNeutronMultiplicity->Fill(nBeam1,nBeam2);
+  Double_t energyKin = 0,mom = 0,phi = 0, theta = 0;
 
-  	TLorentzVector vec;
-  	Int_t nNeutrons[2] = {nBeam1,nBeam2};
-  	Double_t energyPhoton = -1;
-  	Int_t energyBin = -1;
+  TLorentzVector vec;
+  Int_t nNeutrons[2] = {nBeam1,nBeam2};
+  Double_t energyPhoton = -1;
+  Int_t energyBin = -1;
   
-  	Int_t nGenerated=0;
+  Int_t nGenerated=0;
 
-  	if(nNeutrons[side] == 0){}
+  if(nNeutrons[side] == 0){}
 	else{
-    	if(nNeutrons[side] <= 10){
-      	energyPhoton = hSection_Nn[nNeutrons[side]-1].GetRandom();
-      	energyBin = hENDF_2D->GetXaxis()->FindBin(energyPhoton);
-      	if(energyPhoton>140) energyBin--;
-      	hENDF_1D = hENDF_2D->ProjectionY("hENDF_1D",energyBin,energyBin);
-      	//hEnergyBin->Fill(energyBin);
-      	//hEnergyForNeutronMulti->Fill(energyPhoton);
-    	}
+    if(nNeutrons[side] <= 10){
+      energyPhoton = hSection_Nn[nNeutrons[side]-1].GetRandom();
+      energyBin = hENDF_2D->GetXaxis()->FindBin(energyPhoton);
+      if(energyPhoton>140) energyBin--;
+      hENDF_1D = hENDF_2D->ProjectionY("hENDF_1D",energyBin,energyBin);
+      //hEnergyBin->Fill(energyBin);
+      //hEnergyForNeutronMulti->Fill(energyPhoton);
+    }
 
-    	if(nNeutrons[side] > 10)hENDF_1D = hENDF_2D->ProjectionY("hENDF_1D",hENDF_2D->GetNbinsX(),hENDF_2D->GetNbinsX()); 
+    if(nNeutrons[side] > 10)hENDF_1D = hENDF_2D->ProjectionY("hENDF_1D",hENDF_2D->GetNbinsX(),hENDF_2D->GetNbinsX()); 
     	
-    	for(Int_t i = 0; i<nNeutrons[side]; i++){
-      	energyKin = hENDF_1D->GetRandom();
-      	mom = TMath::Sqrt((energyKin + neutron_M)*(energyKin + neutron_M) - neutron_M*neutron_M);
+    for(Int_t i = 0; i<nNeutrons[side]; i++){
+      energyKin = hENDF_1D->GetRandom();
+      mom = TMath::Sqrt((energyKin + neutron_M)*(energyKin + neutron_M) - neutron_M*neutron_M);
  
-      	phi = 2*pi*gRandom->Rndm();
-      	theta = pi*gRandom->Rndm();
+      phi = 2*pi*gRandom->Rndm();
+      theta = pi*gRandom->Rndm();
   
-      	//hKinEnergyGen->Fill(energyKin);
+      //hKinEnergyGen->Fill(energyKin);
 
-      	vec.SetXYZM(mom*TMath::Sin(theta)*TMath::Cos(phi),mom*TMath::Sin(theta)*TMath::Sin(phi), mom*TMath::Cos(theta), neutron_M);
+      vec.SetXYZM(mom*TMath::Sin(theta)*TMath::Cos(phi),mom*TMath::Sin(theta)*TMath::Sin(phi), mom*TMath::Cos(theta), neutron_M);
       
-      	vec.Boost(0,0,TMath::Power(-1,side)*TMath::Sqrt(1.0-1.0/beamGamma/beamGamma));
+      vec.Boost(0,0,TMath::Power(-1,side)*TMath::Sqrt(1.0-1.0/beamGamma/beamGamma));
       
-      	vec.SetPxPyPzE(vec.Px()*0.001,vec.Py()*0.001,vec.Pz()*0.001,vec.Energy()*0.001);  
-      	//vec.SetPxPyPzE(vec.Px(),vec.Py(),vec.Pz(),vec.Energy());  
+      vec.SetPxPyPzE(vec.Px()*0.001,vec.Py()*0.001,vec.Pz()*0.001,vec.Energy()*0.001);  
+      //vec.SetPxPyPzE(vec.Px(),vec.Py(),vec.Pz(),vec.Energy());  
       	
-      	V.push_back(vec);
-      	//TParticle units are GeV, up to now we were in MeV
-      //TParticle *part = (TParticle*) fParticles->ConstructedAt(nGenerated++);
-      //part->SetMomentum(vec.Px()*0.001, vec.Py()*0.001, vec.Pz()*0.001, vec.Energy()*0.001); //GeV convesion
-      //part->SetPdgCode(2112);
-      //part->SetStatusCode(1);
-      //part->SetProductionVertex(0,0,0,0);
-      //part->SetMother(0,-1);
-      //part->SetMother(1,-1);
-     // part->SetDaughter(0,-1);
-      //part->SetDaughter(1,-1);
-      
-      //hNeutronRapidity->Fill(part->Y());
-      //hNeutronEta->Fill(part->Eta());
+      V.push_back(vec);  // store boosted neutron kinematic or LotentzVector
       	
-      	}
-      	
-    
+    } 
 	}
 }
 //======================================================================================================================
