@@ -56,6 +56,7 @@ public:
     double y;        
     double xpom;        
     double beta;        
+            
     //        
     //  Event traits        
     //        
@@ -67,7 +68,7 @@ public:
     //  List of particles in event.        
     //  First two are always beam particles.        
     //        
-    vector<Particle> particles;       
+    vector<Particle> particles;        
             
 public:        
     void list(ostream& = cout) const;        

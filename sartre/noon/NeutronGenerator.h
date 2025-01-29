@@ -61,6 +61,8 @@ public:
   void createSartreNeutrons(const Int_t nBeam1, const Int_t nBeam2, std::vector<Double_t> &NeutronE, std::vector<Double_t> &NeutronEta, std::vector<Double_t> &NeutronY);
   // New method for extracting neutron data in the sartre + noon integration 
   void neutronRecord(const Int_t nBeam1, const Int_t nBeam2, const Int_t side, std::vector<TLorentzVector> &V);
+  // Method to delete the histograms
+  void DelHist();
 
 
   

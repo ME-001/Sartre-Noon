@@ -403,6 +403,8 @@ int main(int argc, char *argv[])
 	        }
 	       
 	    if (iEvent == maxEvents - 1) {
+	    	
+	    	nGenVec[0]->DelHist();
             	nGenVec.clear();  // Clear the vector of pointers
             	hfile->cd();      
         	}

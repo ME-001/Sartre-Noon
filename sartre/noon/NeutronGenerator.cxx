@@ -328,7 +328,7 @@ void NeutronGenerator::neutronRecord(const Int_t nBeam1, const Int_t nBeam2, con
   Int_t nGenerated=0;
 
   if(nNeutrons[side] == 0){}
-	else{
+   else{
     if(nNeutrons[side] <= 10){
       energyPhoton = hSection_Nn[nNeutrons[side]-1].GetRandom();
       energyBin = hENDF_2D->GetXaxis()->FindBin(energyPhoton);
@@ -336,7 +336,7 @@ void NeutronGenerator::neutronRecord(const Int_t nBeam1, const Int_t nBeam2, con
       hENDF_1D = hENDF_2D->ProjectionY("hENDF_1D",energyBin,energyBin);
       //hEnergyBin->Fill(energyBin);
       //hEnergyForNeutronMulti->Fill(energyPhoton);
-    }
+    	}
 
     if(nNeutrons[side] > 10)hENDF_1D = hENDF_2D->ProjectionY("hENDF_1D",hENDF_2D->GetNbinsX(),hENDF_2D->GetNbinsX()); 
     	
@@ -359,8 +359,22 @@ void NeutronGenerator::neutronRecord(const Int_t nBeam1, const Int_t nBeam2, con
       V.push_back(vec);  // store boosted neutron kinematic or LotentzVector
       	
     } 
-	}
+    }
 }
+
+void NeutronGenerator::DelHist() {
+    delete[] hSection_Nn; // Correct way to delete an array
+    hSection_Nn = nullptr; // Avoids dangling pointers
+    delete hEventBreakupMap;
+    hEventBreakupMap = nullptr;
+    delete hXsectionXn;
+    hXsectionXn = nullptr;
+    delete hBranchingRatioMap;
+    hBranchingRatioMap = nullptr;
+    
+}
+
+
 //======================================================================================================================
 //__________________________________________________________________________________
 
